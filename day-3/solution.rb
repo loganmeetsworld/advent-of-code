@@ -1,63 +1,63 @@
 input = 325489
 middle_cord = [0, 0]
 
-def create_spiral(num)
+def create_spiral_hash(num)
   array_dim = Math.sqrt(num).round
   x = y = 0
-  dx, dy = 0, -1
+  next_x, next_y = 0, -1
   coords = Array.new
   coords_hash = Hash.new
-  value = nil
+  value = 0
 
   (array_dim ** 2).times do
-    if x.abs == y.abs && [dx,dy] != [1,0] or x > 0 && y == 1 - x
-      dx, dy = -dy, dx 
+    if x.abs == y.abs && [next_x,next_y] != [1,0] or x > 0 && y == 1 - x
+      next_x, next_y = -next_y, next_x 
     end
 
     if x.abs > array_dim/2 or y.abs > array_dim/2
-      dx, dy = -dy, dx
-      x, y = -y + dx, x + dy
+      next_x, next_y = -next_y, next_x
+      x, y = -y + next_x, x + next_y
     end
 
-    if value == nil
-      value = 1
-    elsif value > num
-      value = value
-    else
+    unless value > num
       value = find_surrounding_coords_value([x, y], coords_hash)
     end
 
     coords << [x, y]
     coords_hash[[x, y]] = value
-    x, y = x + dx, y + dy
+    x, y = x + next_x, y + next_y
   end
   return coords_hash
 end
 
 def find_surrounding_coords_value(coord, coords_hash)
-  sum = 0
-  i, j = coord[0], coord[1]
-  surrounding_coords = [
-    [i-1, j],
-    [i, j-1],
-    [i-1, j-1],
-    [i+1, j],
-    [i, j+1],
-    [i+1, j+1],
-    [i+1, j-1],
-    [i-1, j+1]
-  ]
+  if coord == [0, 0]
+    return 1
+  else
+    sum = 0
+    i, j = coord[0], coord[1]
+    surrounding_coords = [
+      [i-1, j],
+      [i, j-1],
+      [i-1, j-1],
+      [i+1, j],
+      [i, j+1],
+      [i+1, j+1],
+      [i+1, j-1],
+      [i-1, j+1]
+    ]
 
-  surrounding_coords.each do |arr|
-    if !coords_hash[arr].nil?
-      sum += coords_hash[arr]
+    surrounding_coords.each do |arr|
+      if !coords_hash[arr].nil?
+        sum += coords_hash[arr]
+      end
     end
+    return sum
   end
-  return sum
 end
 
-def answer(num)
-  spiral = create_spiral(num)
+def answers(num)
+  spiral = create_spiral_hash(num)
   return [spiral.keys[num - 1], spiral.values[num - 1]]
 end
 
@@ -67,9 +67,9 @@ def find_shorest_distance(point1, point2)
 end
 
 middle_cord = [0, 0]
-answer = answer(input)
-point = answer.first
-value = answer.last
+answers = answers(input)
+point = answers.first
+next_largest_value_part_2 = answers.last
 
 puts find_shorest_distance(middle_cord, point)
-puts value
+puts next_largest_value_part_2
