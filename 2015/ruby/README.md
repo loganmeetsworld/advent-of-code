@@ -1,0 +1,3 @@
+# Advent of Code 
+
+This is a place to hold my Ruby code for the [Advent of Code](http://adventofcode.com/) series for the month of December 2015. All exercises are done in Ruby. Some small parts are missing because I didn't actually intend to upload this so I did a couple of the first exercises in R and tried to translate them back to Ruby. This is just for fun and to get answers and practice my Ruby skills. These are not particularly elegant solutions by any means. But they are helping me to learn more about programming and Ruby.
