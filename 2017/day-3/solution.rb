@@ -10,11 +10,11 @@ def create_spiral_hash(num)
   value = 0
 
   (array_dim ** 2).times do
-    if x.abs == y.abs && [next_x,next_y] != [1,0] or x > 0 && y == 1 - x
+    if x.abs == y.abs && [next_x,next_y] != [1,0] || x > 0 && y == 1 - x
       next_x, next_y = -next_y, next_x 
     end
 
-    if x.abs > array_dim/2 or y.abs > array_dim/2
+    if x.abs > array_dim/2 || y.abs > array_dim/2
       next_x, next_y = -next_y, next_x
       x, y = -y + next_x, x + next_y
     end
