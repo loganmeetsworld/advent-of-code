@@ -1,20 +1,28 @@
 require 'test/unit'
+require 'pry'
 extend Test::Unit::Assertions
 
 class Firewall
-  attr_accessor :fh
+  attr_accessor :fh, :severity, :delay
 
   def initialize(instr)
-    @fh = create_firewall_hash(instr)
+    @instr = instr
+    @fh = create_firewall_hash()
     @severity = 0
     @packet_position = 0
+    @delay = 0
+    @never_caught = false
   end
 
-  def create_firewall_hash(instr)
+  def create_firewall_hash
     h, dir = Hash.new, true
-    instr.split("\n").each{ |l| values = l.split(': '); h[values.first.to_i] = [Array.new(values.last.to_i), dir] }
+    @instr.split("\n").each{ |l| values = l.split(': '); h[values.first.to_i] = [Array.new(values.last.to_i), dir] }
     h.values.each{ |v| v.first[0] = 'S' }
     return h
+  end
+
+  def reset_scanner_positions
+    @fh = create_firewall_hash()
   end
 
   def update_scanner_positions
@@ -32,28 +40,46 @@ class Firewall
     end
   end
 
-  def print_helpful_info(p, fh)
-    puts "Caught at column #{p} with severity #{fh[p][0].length}"
+  def find_shortest_safe_delay
+    reset_scanner_positions()
+    until @never_caught
+      @never_caught = true
+      update_scanner_positions()
+      @delay += 1 
+      temp = Marshal.load(Marshal.dump(@fh))
+
+      (0..fh.keys.max).each do |p|
+        v = fh[p]
+        if !v.nil? && !v[0][@packet_position].nil? then @never_caught = false; break end
+        update_scanner_positions()
+      end
+
+      if @never_caught == false then @fh = temp end
+    end
   end
 
-  def calculate_severity_traversing_firewall
+  def find_severity_traversing_firewall_with_no_delay
     (0..fh.keys.max).each do |p|
       v = fh[p]
-      if !v.nil? && !v[0][@packet_position].nil?
-        @severity += (p * fh[p][0].length)
-        # print_helpful_info(p, fh)
-      end
+      if !v.nil? && !v[0][@packet_position].nil? then @severity += (p * fh[p][0].length) end
       update_scanner_positions()
     end
-    return @severity
   end
 end
 
+# tests
 test_input = "0: 3\n1: 2\n4: 4\n6: 4"
 test_firewall = Firewall.new(test_input)
-assert_equal test_firewall.calculate_severity_traversing_firewall, 24
+test_firewall.find_severity_traversing_firewall_with_no_delay
+test_firewall.find_shortest_safe_delay
+assert_equal test_firewall.severity, 24
+assert_equal test_firewall.delay, 10
 
+# answers
 input = File.open('input.txt').read
 firewall = Firewall.new(input)
-part1_answer = firewall.calculate_severity_traversing_firewall
-puts part1_answer
+firewall.find_severity_traversing_firewall_with_no_delay
+puts "Part 1 answer: #{firewall.severity}"
+# this will definitely take like 10 minutes to run
+firewall.find_shortest_safe_delay
+puts "Part 2 answer: #{firewall.delay}"
