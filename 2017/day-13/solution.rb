@@ -1,50 +1,59 @@
-input = File.open('input.txt').read.split("\n")
-# input = "0: 3
-# 1: 2
-# 4: 4
-# 6: 4".split("\n")
+require 'test/unit'
+extend Test::Unit::Assertions
 
-def create_firewall(input)
-  firewall = Hash.new
-  input.each{ |l| firewall[l.split(': ')[0].to_i] = [Array.new(l.split(': ')[1].to_i), true] }
-  firewall.values.each {|v| v[0][0] = 'S' }
-  return firewall
-end
+class Firewall
+  attr_accessor :fh
 
-packet_position = 0
-hit_count = 0
-firewall = create_firewall(input)
+  def initialize(instr)
+    @fh = create_firewall_hash(instr)
+    @severity = 0
+    @packet_position = 0
+  end
 
-def update_scanner_positions(firewall)
-  firewall.values.each do |v|
-    column = v[0]
-    scanner_direction_down = v[1]
-    current_scanner_position = column.index('S')
-    last_item_index = column.length - 1
-    if scanner_direction_down
-      v[0][current_scanner_position + 1] = 'S'
-      if current_scanner_position + 1 == last_item_index
-        v[1] = false
+  def create_firewall_hash(instr)
+    h, dir = Hash.new, true
+    instr.split("\n").each{ |l| values = l.split(': '); h[values.first.to_i] = [Array.new(values.last.to_i), dir] }
+    h.values.each{ |v| v.first[0] = 'S' }
+    return h
+  end
+
+  def update_scanner_positions
+    fh.values.each do |v|
+      column, scanner_direction_down = v[0], v[1]
+      current_scanner_position, last_item_index = column.index('S'), column.length - 1
+      if scanner_direction_down
+        column[current_scanner_position + 1] = 'S'
+        v[1] = false if current_scanner_position + 1 == last_item_index
+      else
+        column[current_scanner_position - 1] = 'S'
+        v[1] = true if current_scanner_position - 1 == 0
       end
-    else
-      v[0][current_scanner_position - 1] = 'S'
-      if current_scanner_position - 1 == 0
-        v[1] = true
-      end
+      column[current_scanner_position] = nil
     end
-
-    v[0][current_scanner_position] = nil
   end
-  return firewall
+
+  def print_helpful_info(p, fh)
+    puts "Caught at column #{p} with severity #{fh[p][0].length}"
+  end
+
+  def calculate_severity_traversing_firewall
+    (0..fh.keys.max).each do |p|
+      v = fh[p]
+      if !v.nil? && !v[0][@packet_position].nil?
+        @severity += (p * fh[p][0].length)
+        # print_helpful_info(p, fh)
+      end
+      update_scanner_positions()
+    end
+    return @severity
+  end
 end
 
-(0..firewall.keys.max).each do |pico|
-  v = firewall[pico]
-  if !v.nil? && !v[0][packet_position].nil?
-    hit_count += (pico * firewall[pico][0].length)
-    puts "Caught at column #{pico} with severity #{firewall[pico][0].length}"
-  end
-  update_scanner_positions(firewall)
-end
+test_input = "0: 3\n1: 2\n4: 4\n6: 4"
+test_firewall = Firewall.new(test_input)
+assert_equal test_firewall.calculate_severity_traversing_firewall, 24
 
-puts "Hit severity: #{hit_count}"
+input = File.open('input.txt').read
+firewall = Firewall.new(input)
+part1_answer = firewall.calculate_severity_traversing_firewall
+puts part1_answer
