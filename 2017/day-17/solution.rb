@@ -1,19 +1,18 @@
-steps = 335
-current_position = 0
-times_inserted = 2017
-spinlock = [0]
-value = 1
+def answer(times_inserted)
+  steps, current_position, spinlock, value = 335, 0, [0], 1
 
-until times_inserted == 0
-  current_position = (current_position + steps) % spinlock.length
-  if spinlock[current_position + 1]
-    spinlock.insert(current_position + 1, value)
-  else
-    spinlock[current_position + 1] = value
+  until times_inserted.zero?
+    current_position = (current_position + steps) % spinlock.length
+    spinlock[current_position + 1] ? spinlock.insert(current_position + 1, value) : spinlock[current_position + 1] = value
+    current_position += 1; times_inserted -= 1; value += 1
+    puts 'hi' if times_inserted % 10_000_000 == 0
   end
-  current_position += 1
-  times_inserted -= 1
-  value += 1
+
+  spinlock[spinlock.index(2017) + 1]
 end
 
-puts spinlock[spinlock.index(2017) + 1]
+times_inserted_p1 = 2017
+times_inserted_p2 = 50_000_000
+
+puts "Part 1: #{answer(times_inserted_p1)}"
+puts "Part 2: #{answer(times_inserted_p2)}"
