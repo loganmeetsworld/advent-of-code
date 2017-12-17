@@ -1,18 +1,26 @@
-def answer(times_inserted)
-  steps, current_position, spinlock, value = 335, 0, [0], 1
+def part1_answer
+  steps, current_position, spinlock, value, times_inserted = 335, 0, [0], 1, 2017
 
   until times_inserted.zero?
     current_position = (current_position + steps) % spinlock.length
     spinlock[current_position + 1] ? spinlock.insert(current_position + 1, value) : spinlock[current_position + 1] = value
     current_position += 1; times_inserted -= 1; value += 1
-    puts 'hi' if times_inserted % 10_000_000 == 0
   end
 
   spinlock[spinlock.index(2017) + 1]
 end
 
-times_inserted_p1 = 2017
-times_inserted_p2 = 50_000_000
+def part2_answer
+  steps, current_position, value_after_zero, times_inserted = 335, 0, 0, 1
 
-puts "Part 1: #{answer(times_inserted_p1)}"
-puts "Part 2: #{answer(times_inserted_p2)}"
+  until times_inserted == 50_000_000
+    current_position = (current_position + steps) % times_inserted
+    if current_position == 0 then value_after_zero = times_inserted end
+    current_position += 1; times_inserted += 1
+  end
+
+  value_after_zero
+end
+
+puts "Part 1: #{part1_answer()}"
+puts "Part 2: #{part2_answer()}"
