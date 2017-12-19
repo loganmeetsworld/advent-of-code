@@ -1,26 +1,45 @@
 def run(registers, id, freq, received)
-  current_position, values, vals_received = 0, {}, 0
-  registers.map{|x| values[x.split[1]] = 0}; values[:p] = id
+  current_position, count, values = 0, 0, Hash.new(0)
+  resolve = ->(e) { e.to_i.to_s == e ? e.to_i : values[e] }
 
-  while current_position >= 0
-    i, x, y = registers[current_position].split[0], registers[current_position].split[1], registers[current_position].split[2]
-    y = values[y] if y.to_i.to_s != y if y; y = y.to_i
-    case i
-    when 'snd'
-      freq << values[x]
-    when 'set'
-      values[x] = y
-    when 'add'
-      values[x] += y
-    when 'mul'
-      values[x] *= y
-    when 'mod'
-      values[x] = values[x] % y
-    when 'rcv'
-      if freq[-1] > 0 then break freq end
-    when 'jgz'
-      current_position = (current_position + y) % registers.length - 1 if values[x] > 0
+  -> {
+    ran = false
+    while current_position >= 0 && (line = registers[current_position])
+      i, x, y = line.split[0], line.split[1], line.split[2]
+      case i
+      when 'snd'
+        freq << resolve[x]
+      when 'set'
+        values[x] = resolve[y]
+      when 'add'
+        values[x] += resolve[y]
+      when 'mul'
+        values[x] *= resolve[y]
+      when 'mod'
+          values[x] %= resolve[y]
+      when 'rcv'
+        return ran ? :wait : :still_waiting unless (val = received[count])
+        count += 1
+        values[x] = val
+      when 'jgz'
+        current_position += (resolve[y] - 1) if resolve[x] > 0
+      end
+      current_position += 1
+      ran = true
     end
-    current_position += 1
+  }
+end
+
+registers = File.open('input.txt').read.lines
+programs = [[], []]
+runners = [0, 1].map { |id| run(registers, id, programs[id], programs[1 - id]) }
+partner_waiting = false
+
+0.step do |n|
+  status = runners[n % 2][]
+  if status == :still_waiting && partner_waiting
+    puts "Part 2: #{programs[1].count}"
+    break
   end
+  partner_waiting = status == :still_waiting
 end

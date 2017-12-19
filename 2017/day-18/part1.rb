@@ -1,9 +1,8 @@
 def run(registers)
-  current_position, values, freq = 0, {}, []
-  registers.map{|x| values[x.split[1]] = 0}
+  current_position, values, freq = 0, Hash.new(0), []
 
-  until current_position > registers.length
-    i, x, y = registers[current_position].split[0], registers[current_position].split[1], registers[current_position].split[2]
+  while current_position >= 0 && (line = registers[current_position])
+    i, x, y = line.split[0], line.split[1], line.split[2]
     y = values[y] if y.to_i.to_s != y if y; y = y.to_i
     case i
     when 'snd'
@@ -15,11 +14,12 @@ def run(registers)
     when 'mul'
       values[x] *= y
     when 'mod'
-      values[x] = values[x] % y
+        values[x] %= y
     when 'rcv'
-      if freq[-1] > 0 then break freq end
+      if values[x] > 0 then break freq end
     when 'jgz'
-      current_position = (current_position + y) % registers.length - 1 if values[x] > 0
+      n = x.to_i.to_s != x ? values[x] : x
+      current_position = (current_position + y) % registers.length - 1 if n > 0
     end
     current_position += 1
   end
