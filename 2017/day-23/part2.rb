@@ -1,29 +1,15 @@
-def resolve(n, values)
-  n.to_i.to_s == n ? n.to_i : values[n]
-end
+# This helped me immensely, thank you @mjgpy3!:
+# https://www.youtube.com/watch?v=AqXTZo6o34s
 
-def run(registers)
-  values, current_position, mul_count = Hash.new(0), 0, 0
-  values['a'] = 1
+a, b, c, d, e, f, g, h = 1, 107900, 124900, 0, 0, 0, 0, 0
 
-  while current_position >= 0 && (line = registers[current_position])
-    i, x, y = line[0], line[1], line[2]
-    case i
-    when 'sub'
-      values[x] -= resolve(y, values)
-    when 'set'
-      values[x] = resolve(y, values)
-    when 'mul'
-      mul_count += 1
-      values[x] *= resolve(y, values)
-    when 'jnz'
-      current_position += (resolve(y, values) - 1) if resolve(x, values) != 0
-    end
-    current_position += 1
+while true
+  f, d = true, 2
+  while d < b
+    if b % d == 0 then f = false; break end; d += 1
   end
 
-  mul_count
+  h += 1 if !f; break if b == c; b += 17
 end
 
-registers = File.open('input.txt').read.split("\n").map(&:split)
-puts "Part 1: #{run(registers)}"
+puts "Part 2: #{h}"
