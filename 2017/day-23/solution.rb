@@ -1,37 +1,28 @@
-require 'pry'
-
-class String
-  def is_i?
-    !!(self =~ /\A[-+]?[0-9]+\z/)
-  end
+def resolve(n, values)
+  n.to_i.to_s == n ? n.to_i : values[n]
 end
-
-registers = File.open('input.txt').read.lines
 
 def run(registers)
-  current_position, values, count = 0, Hash.new(0), 0
+  values, current_position, mul_count = Hash.new(0), 0, 0
 
-  while current_position >= 0 && current_position <= registers.length
-    line = registers[current_position]
-    i, x, y = line.split[0], line.split[1], line.split[2]
-    y = values[y] if !y.is_i? if y; y = y.to_i
+  while current_position >= 0 && (line = registers[current_position])
+    i, x, y = line[0], line[1], line[2]
     case i
-    when 'set'
-      values[x] = y
     when 'sub'
-      values[x] -= y
+      values[x] -= resolve(y, values)
+    when 'set'
+      values[x] = resolve(y, values)
     when 'mul'
-      values[x] *= y
-      count += 1
+      mul_count += 1
+      values[x] *= resolve(y, values)
     when 'jnz'
-      n = x.is_i? ? x.to_i : values[x]
-      current_position = (current_position + y) % registers.length - 1 if n != 0
+      current_position += (resolve(y, values) - 1) if resolve(x, values) != 0
     end
     current_position += 1
-    puts current_position
   end
 
-  return count
+  mul_count
 end
 
+registers = File.open('input.txt').read.split("\n").map(&:split)
 puts "Part 1: #{run(registers)}"
