@@ -9,7 +9,7 @@ def possible_bridges(start, components)
     next_comp = comp.first == start ? comp.last : comp.first
     following = possible_bridges(next_comp, components.select{|c| c != comp})
     following.each do |remaining|
-      components_set.add [comp] + remaining
+      components_set.add([comp] + remaining)
     end
   end
   components_set
@@ -19,10 +19,17 @@ def calculate_strength(bridge)
   bridge.flatten.inject(&:+)
 end
 
-def strongest_bridge(components)
-  possible_bridges = possible_bridges(0, components)
+def strongest_bridge(possible_bridges)
   possible_bridges.map{ |bridge| calculate_strength(bridge) }.max
 end
 
+def longest_bridge(possible_bridges)
+  max_length = possible_bridges.max_by(&:length).length
+  all_with_max_length = possible_bridges.find_all{|x| x.length == max_length}
+  strongest_bridge(all_with_max_length)
+end
+
 components = File.open('input.txt').read.lines.map(&:strip).map{|l| l.split('/').map(&:to_i)}
-puts "Part 1: #{strongest_bridge(components)}"
+possible_bridges = possible_bridges(0, components)
+puts "Part 1: #{strongest_bridge(possible_bridges)}"
+puts "Part 2: #{longest_bridge(possible_bridges)}"
