@@ -14,7 +14,7 @@ def cal(text)
 
   extra = nums.flatten.min
 
-  total = sum + extra 
+  total = sum + extra
 end
 
 array_1 = a.split("\n")
