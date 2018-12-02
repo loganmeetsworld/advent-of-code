@@ -13,3 +13,14 @@ for box in inp:
         threes += 1
 
 print(twos * threes)
+
+print("Part 2:")
+# inspired by https://github.com/petertseng/adventofcode-rb-2018/blob/master/02_inventory_management.rb#L20-L26
+
+seen = []
+for box in inp:
+    for idx, letter in enumerate(box):
+        pair = [box[0:idx], box[(idx + 1):-1]]
+        if pair in seen:
+            print(''.join(pair))
+        seen.append(pair)
