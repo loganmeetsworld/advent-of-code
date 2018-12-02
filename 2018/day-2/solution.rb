@@ -1,4 +1,4 @@
-input = File.open("./input.txt").readlines
+input = File.open("./input.txt").readlines.map(&:chomp)
 
 puts "Part 1:"
 
@@ -12,3 +12,18 @@ end
 puts twos * threes
 
 puts "Part 2:"
+
+solution = []
+input.each_with_index do |box_one, pos|
+    input[pos + 1..input.length].each do |box_two|
+        conflict = box_one.each_char.with_index.count{ |k, v| k != box_two.chars[v] }
+        if conflict == 1
+            box_one.split('').each_with_index do |l, i|
+                solution.push(l) if box_two[i] == l
+            end
+            break
+        end
+    end
+end
+
+puts solution.join('')
