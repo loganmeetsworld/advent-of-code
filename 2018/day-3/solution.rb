@@ -1,50 +1,44 @@
-lines = File.open("./input.txt").readlines.map(&:chomp).map(&:freeze).freeze
-SQUARE_DIMENSION = 1000
+lines, square_dims = File.open("./input.txt").readlines.map(&:chomp).map(&:freeze).freeze, 1000
 
 def build_square(dim)
     square = Array.new(dim)
-    square.length.times do |i|
-        square[i] = Array.new(dim, '.')
-    end
-
+    square.length.times{ |i| square[i] = Array.new(dim, '.') }
     return square
 end
 
 def parse(line)
     scan = line.scan(/(\d+)/).map(&:first)
-    return {'id': scan[0], 'dist_from_left': scan[1], 'dist_from_top': scan[2], 'width': scan[3], 'height': scan[4]}
+    return {'id': scan[0], 'dist_from_left': scan[1].to_i, 'dist_from_top': scan[2].to_i, 'width': scan[3].to_i, 'height': scan[4].to_i}
 end
 
-square = build_square(SQUARE_DIMENSION)
-instructions = lines.map{ |x| parse(x) }
+square = build_square(square_dims)
+claims = lines.map{ |x| parse(x) }
 
-instructions.each do |instr|
-    (0...instr[:width].to_i).to_a.each do |x|
-        (0...instr[:height].to_i).to_a.each do |y|
-            if square[instr[:dist_from_top].to_i + y][instr[:dist_from_left].to_i + x] == '.'
-                square[instr[:dist_from_top].to_i + y][instr[:dist_from_left].to_i + x] = instr[:id]
+claims.each do |claim|
+    (0...claim[:width]).to_a.each do |x|
+        (0...claim[:height]).to_a.each do |y|
+            if square[claim[:dist_from_top] + y][claim[:dist_from_left] + x] == '.'
+                square[claim[:dist_from_top] + y][claim[:dist_from_left] + x] = claim[:id]
             else
-                square[instr[:dist_from_top].to_i + y][instr[:dist_from_left].to_i + x] = 'X'
+                square[claim[:dist_from_top] + y][claim[:dist_from_left] + x] = 'X'
             end
         end
     end
 end
 
 puts "Part 1:"
-File.open("output.txt", "w+") do |f|
-    square.each { |element| f.puts(element.join('')) }
-end
 puts square.flatten.count('X')
 
 puts "Part 2:"
-instructions.each do |instr|
+claims.each do |claim|
     part_two_found = true
-    (0...instr[:width].to_i).to_a.each do |x|
-        (0...instr[:height].to_i).to_a.each do |y|
-            if square[instr[:dist_from_top].to_i + y][instr[:dist_from_left].to_i + x] == 'X'
+    (0...claim[:width]).to_a.each do |x|
+        (0...claim[:height]).to_a.each do |y|
+            if square[claim[:dist_from_top] + y][claim[:dist_from_left] + x] == 'X'
                 part_two_found = false
+                break
             end
         end
     end
-    puts instr[:id] if part_two_found
+    puts claim[:id] if part_two_found
 end
