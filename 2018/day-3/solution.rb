@@ -36,4 +36,15 @@ File.open("output.txt", "w+") do |f|
 end
 puts square.flatten.count('X')
 
-# puts "Part 2:"
+puts "Part 2:"
+instructions.each do |instr|
+    part_two_found = true
+    (0...instr[:width].to_i).to_a.each do |x|
+        (0...instr[:height].to_i).to_a.each do |y|
+            if square[instr[:dist_from_top].to_i + y][instr[:dist_from_left].to_i + x] == 'X'
+                part_two_found = false
+            end
+        end
+    end
+    puts instr[:id] if part_two_found
+end
