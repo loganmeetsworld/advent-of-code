@@ -1,26 +1,27 @@
-# input = 'dabAcCaCBAcCcaDA'
+def remove_reactions(input)
+    stack = [input.shift]
+    input.each do |char|
+        next if char == nil || stack.empty?
+        # check if the difference in character code indicates capitalization
+        (stack.last.ord - char.ord).abs == 32 ? stack.pop : stack.push(char)
+    end
+    return stack
+end
+
+def remove_units(l, polymer)
+    return polymer.gsub(l, '').gsub(l.upcase, '')
+end
+
 input = File.open("./input.txt").read.chomp
 
-def polymer?(s1, s2)
-    return false if /[[:upper:]]/.match(s1) and /[[:upper:]]/.match(s2)
-    return if s1 == nil or s2 == nil
-    s1 == s2.upcase || s2 == s1.upcase
-end
-
 puts "Part 1:"
-while true
-    length = input.length
-    for i in (0...input.length).to_a
-        if polymer?(input[i], input[i + 1])
-            input.slice!(input[i] + input[i + 1])
-            break
-        end
-    end
-    if input.length == length
-        break
-    end
-end
-
-puts input.length
+puts remove_reactions(input.dup.chars).length
 
 puts "Part 2:"
+lengths = []
+('a'..'z').each do |l|
+    polymer = remove_units(l, input.dup)
+    polymer = remove_reactions(polymer.chars)
+    lengths.push(polymer.length) unless polymer.length == 0
+end
+puts lengths.min
