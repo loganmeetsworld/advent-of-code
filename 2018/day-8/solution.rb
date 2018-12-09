@@ -1,0 +1,1 @@
+input = File.open(input.txt).read.split(' ').map(&:to).map(&:freeze)
