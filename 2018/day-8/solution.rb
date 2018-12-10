@@ -1,6 +1,3 @@
-input = File.open('input.txt').read.split(' ').map(&:to_i).map(&:freeze)
-# input = "2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2".split(' ').map(&:to_i).map(&:freeze)
-
 def sum_metadata(input)
     metadata = 0
     num_nodes = input.shift
@@ -12,4 +9,27 @@ def sum_metadata(input)
     return metadata
 end
 
+puts "Part 1:"
+input = File.open('input.txt').read.split(' ').map(&:to_i).map(&:freeze)
 puts sum_metadata(input)
+
+def find_node_value(input)
+    num_nodes = input.shift
+    num_metadata = input.shift
+    node_sums = (0...num_nodes).map{ find_node_value(input) }
+
+    if num_nodes == 0
+        (0...num_metadata).map{ input.shift }.inject(&:+)
+    else
+        node_value = 0
+        num_metadata.times do
+            metadata = input.shift - 1
+            node_value += node_sums[metadata] if metadata < num_nodes
+        end
+        node_value
+    end
+end
+
+puts "Part 2:"
+input = File.open('input.txt').read.split(' ').map(&:to_i).map(&:freeze)
+puts find_node_value(input)
