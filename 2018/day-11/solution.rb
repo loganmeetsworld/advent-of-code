@@ -19,8 +19,7 @@ def build_grid(grid_serial_number)
 end
 
 def find_max_area(grid)
-    best_sum = -10000
-    size = 0
+    best_sum, best_coord = -10000, [0, 0]
     (1..300).each do |x|
         (1..300).each do |y|
             coords = [[x, y], [x, y + 1], [x, y + 2], [x + 1, y], [x + 2, y], [x + 1, y + 1], [x + 1, y + 2], [x + 2, y + 1], [x + 2, y + 2]]
@@ -28,13 +27,12 @@ def find_max_area(grid)
             if sum > best_sum
                 best_sum = sum
                 best_coord = [x, y]
-                puts best_sum
-                puts best_coord.to_s
             end
         end
     end
+    return best_coord.to_s
 end
 
 grid_serial_number = 1308
 grid = build_grid(grid_serial_number)
-find_max_area(grid)
+puts find_max_area(grid)
