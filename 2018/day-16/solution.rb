@@ -114,12 +114,12 @@ puts "part 1:"
 puts three_or_more_valid_opcodes
 
 puts "part 2:"
-possible_real_codes = possible_real_codes.map{ |k, v| possible_real_codes[k] = v.to_a.first }
+possible_real_codes.map{ |k, v| possible_real_codes[k] = v.to_a.first }
 test_input = part_2.strip.split("\n").map{ |x| x.split(' ').map(&:to_i) }
 state = [0, 0, 0, 0]
 
 test_input.each do |i|
-  state = send(possible_real_codes[i[0]], i[1], i[2], i[3], state)
+  send(possible_real_codes[i[0]], i[1], i[2], i[3], state)
 end
 
 puts state[0]
