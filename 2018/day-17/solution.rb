@@ -3,27 +3,26 @@ def parse(lines)
     lines.each do |line|
         x, y_start, y_end = line.scan(/\d+/).map(&:to_i)
         (y_start..y_end).to_a.map{ |y| data.push([x, y]) } if line.chars.first == 'x'
-        (y_start..y_end + 1).to_a.map{ |y| data.push([y, x]) } if line.chars.first == 'y'
+        (y_start..y_end).to_a.map{ |y| data.push([y, x]) } if line.chars.first == 'y'
     end
     return data
 end
 
 def build_grid(data)
     grid = []
-    min_x = data.min_by{ |x| x[1] }[1]
-    max_x = data.max_by{ |x| x[1] }[1]
-    min_y = data.min_by{ |x| x[0] }[0] - 1
-    max_y = data.max_by{ |x| x[0] }[0] + 1
+    min_x, max_x = data.min_by{ |x| x[1] }[1], data.max_by{ |x| x[1] }[1]
+    min_y, max_y = data.min_by{ |x| x[0] }[0] - 1, data.max_by{ |x| x[0] }[0] + 1
 
-    (0..max_x + 1).each do |i|
-        tmp = []
-        (0..max_y - min_y + 1).each do |j|
-            tmp.push('.')
+    (0..max_x).each do |i|
+        tracker = []
+        (0..max_y - min_y).each do |j|
+            tracker.push('.')
         end
-        grid.push(tmp)
+        grid.push(tracker)
     end
 
-    grid[0][500-min_y] = '+'
+    # begin the water flow
+    grid[0][500 - min_y] = '+'
     data.each do |d|
         grid[d[1]][d[0] - min_y] = '#'
     end
@@ -31,15 +30,54 @@ def build_grid(data)
     return grid
 end
 
-# lines = File.open('input.txt').readlines.map(&:chomp)
-lines = "x=495, y=2..7
-y=7, x=495..501
-x=501, y=3..7
-x=498, y=2..4
-x=506, y=1..2
-x=498, y=10..13
-x=504, y=10..13
-y=13, x=498..504".split("\n").map(&:chomp)
+def let_the_water_fall_where_it_may(grid, data)
+    unvisited = [[1, 500]]
+    min_x, max_x = data.min_by{ |x| x[1] }[1], data.max_by{ |x| x[1] }[1]
+    min_y, max_y = data.min_by{ |x| x[0] }[0] - 1, data.max_by{ |x| x[0] }[0] + 1
+
+    while unvisited.length > 0
+        next_location = unvisited.pop
+        grid[next_location[0]][next_location[1] - min_y] = '|' if grid[next_location[0]][next_location[1] - min_y] == '.'
+        next if next_location[0] == max_x
+
+        if grid[next_location[0] + 1][next_location[1] - min_y] == '.'
+            unvisited.push([next_location[0] + 1, next_location[1]])
+            next
+        elsif ['~', '#'].include?(grid[next_location[0] + 1][next_location[1] - min_y])
+            unvisited.push([next_location[0],next_location[1] + 1]) if grid[next_location[0]][next_location[1] - min_y + 1] == '.'
+            unvisited.push([next_location[0],next_location[1] - 1]) if grid[next_location[0]][next_location[1] - min_y - 1] == '.'
+
+            if ['|','#'].include?(grid[next_location[0]][next_location[1] - min_y + 1]) && ['|','#'].include?(grid[next_location[0]][next_location[1]-min_y-1])
+                flag, tracker = true, next_location[1]
+                tracker += 1 while ['|','~'].include?(grid[next_location[0]][tracker - min_y + 1])
+                next if grid[next_location[0]][tracker - min_y + 1] != '#'
+                tracker = next_location[1]
+                tracker -= 1 while ['|','~'].include?(grid[next_location[0]][tracker - min_y - 1])
+                next if grid[next_location[0]][tracker - min_y - 1] != '#'
+                tracker = next_location[1]
+                grid[next_location[0]][tracker - min_y] = '~'
+                unvisited.push([next_location[0] - 1, tracker]) if grid[next_location[0]-1][tracker - min_y] == '|'
+
+                while ['|','~'].include?(grid[next_location[0]][tracker - min_y + 1])
+                    grid[next_location[0]][tracker - min_y + 1] = '~'
+                    tracker += 1
+                    unvisited.push([next_location[0] - 1,tracker]) if grid[next_location[0] - 1][tracker-min_y] == '|'
+                end
+
+                while ['|','~'].include?(grid[next_location[0]][tracker - min_y - 1])
+                    grid[next_location[0]][tracker - min_y - 1] = '~'
+                    tracker -= 1
+                    unvisited.push([next_location[0] - 1, tracker]) if grid[next_location[0] - 1][tracker - min_y] == '|'
+                end
+            end
+        end
+    end
+    return grid
+end
+
+lines = File.open('input.txt').readlines.map(&:chomp)
 data = parse(lines)
-graph = build_grid(data)
-puts graph.to_s
+grid = build_grid(data)
+final_grid = let_the_water_fall_where_it_may(grid, data)
+puts final_grid.flatten.count('|') + final_grid.flatten.count('~')
+puts final_grid.flatten.count('~')
