@@ -35,7 +35,20 @@ lumberyard = File.open('input.txt').readlines.map(&:chomp).map(&:chars)
 10.times{ lumberyard = change_state(lumberyard) }
 puts resource_value(lumberyard.flatten.count('#'), lumberyard.flatten.count('|'))
 
-# puts "Part 2:"
-# lumberyard = File.open('input.txt').readlines.map(&:chomp).map(&:chars)
-# 1000000000.times{ |t| lumberyard = change_state(lumberyard); puts t / 1000000000 if t % 10000000 == 0 }
-# puts resource_value(lumberyard.flatten.count('#'), lumberyard.flatten.count('|'))
+puts "Part 2:"
+lumberyard = File.open('input.txt').readlines.map(&:chomp).map(&:chars)
+lumberyards, count = Hash.new, 0
+lumberyards[count] = lumberyard
+
+while true
+  lumberyard = change_state(lumberyard)
+  count += 1
+  if lumberyards.values.include?(lumberyard)
+    cyclical_difference = count - lumberyards.values.index(lumberyard)
+    break
+  end
+  lumberyards[count] = lumberyard
+end
+
+(cyclical_difference * 20 + 20).times{ |t| lumberyard = change_state(lumberyard) }
+puts resource_value(lumberyard.flatten.count('#'), lumberyard.flatten.count('|'))
