@@ -45,22 +45,34 @@ class Warrior
   end
 
   def move()
+    squares_surrounding_current_warrior = find_surrounding(@position)
     in_range_targets = @battle.warriors.select{ |t| t.type != @type }.map{ |t| find_surrounding(t.position).select{ |i| @battle.field[i] == "." } }.flatten.uniq
-    possible_moves = in_range_targets.map{ |t| find_next_move(t) }.compact.sort
-    return false if possible_moves.empty?
-    next_position = possible_moves.first.last
+    target_to_attack = @battle.warriors.select{ |t| t.type != @type && squares_surrounding_current_warrior.include?(t.position) }.min_by{ |t| [t.hit_points, t.position] }
+    return attack(target_to_attack) if target_to_attack
 
-    @battle.field[@position] = "."
-    @battle.field[next_position] = @type
-    @position = next_position
+    possible_moves = in_range_targets.map{ |t| find_next_move(t, squares_surrounding_current_warrior) }.compact.sort
+    unless possible_moves.empty?
+      next_position = possible_moves.first.last
+      @battle.field[@position] = "."
+      @battle.field[next_position] = @type
+      @position = next_position
+    end
   end
 
-  def find_surrounding(position)
+  private def attack(target)
+    target.hit_points -= @attack_power
+    if target.hit_points <= 0
+      puts "Target has fallen! Team #{target.type} is minus one member."
+      @battle.field[target.position] = '.'
+      @battle.warriors.delete(target)
+    end
+  end
+
+  private def find_surrounding(position)
     [position - (@battle.field.split.first.length + 1), position - 1, position + 1, position +  (@battle.field.split.first.length + 1)]
   end
 
-  def find_next_move(target)
-    surrounding_squares = find_surrounding(@position).select{ |i| @battle.field[i] == "." }
+  private def find_next_move(target, squares_surrounding_current_warrior)
     possible_moves, next_possible_options, seen = [target], [], Set.new
 
     distance, step = 1, nil
@@ -74,7 +86,7 @@ class Warrior
       end
 
       position = possible_moves.pop
-      if surrounding_squares.include?(position)
+      if squares_surrounding_current_warrior.include?(position)
         step = position
         break
       end
@@ -87,23 +99,10 @@ class Warrior
 
     return [distance, target, step] if step
   end
-
-  def attack()
-    surrounding_squares = find_surrounding(@position)
-    target = @battle.warriors.select{ |w| w.type != @type && surrounding_squares.include?(w.position) }.min_by { |w| [w.hit_points, w.position] }
-    return false unless target
-    target.hit_points -= @attack_power
-    if target.hit_points <= 0
-      puts "Target has fallen! Team #{target.type} is minus one member."
-      @battle.field[target.position] = '.'
-      @battle.warriors.delete(target)
-    end
-    return true
-  end
 end
 
 # Initiate the battle with the puzzle input battlefield given
-field = File.open('test-input.txt').read.chomp
+field = File.open('test-5.txt').read.chomp
 battle = Battle.new(field)
 puts "Initial battle state:"
 battle.print_battle_state
@@ -114,13 +113,9 @@ battle.initial_warrior_positions.each{ |w| battle.warriors.push(Warrior.new(w[:t
 # Until all the warriors die on a give side, move the battle forward in rounds until a side wins.
 until battle.warriors_on_one_side_all_dead?
   puts "Round ##{battle.rounds + 1}:"
-
-  battle.warriors.sort_by(&:position).each do |w|
-    w.move() && w.attack() unless w.attack()
-  end
-
-  battle.print_battle_state
+  battle.warriors.sort_by(&:position).each{ |w| w.move() }
   battle.rounds += 1
+  battle.print_battle_state
 end
 
 # The outcome of the round is determined by how many rounds were fought, and how many points remain on the winning side
