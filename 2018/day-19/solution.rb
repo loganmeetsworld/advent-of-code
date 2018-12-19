@@ -82,23 +82,24 @@ input = File.open('input.txt').readlines.map(&:chomp)
 instruction_pointer = input.first.scan(/\d+/).first.to_i
 instructions = input[1..-1]
 
-[0, 1].each do |part|
-  registers = [part, 0, 0, 0, 0, 0]
+registers = [0, 0, 0, 0, 0, 0]
 
-  while true
-    begin
-      ip = registers[instruction_pointer]
-      opcode = instructions[ip].split()
-      args = opcode[1..-1].map(&:to_i)
-      instr = opcode[0]
-      registers = send(instr, *args, registers)
-      registers[instruction_pointer] += 1
-    rescue NoMethodError => e
-      puts registers.to_s
-      break
-    end
+while true
+  begin
+    ip = registers[instruction_pointer]
+    opcode = instructions[ip].split()
+    args = opcode[1..-1].map(&:to_i)
+    instr = opcode[0]
+    registers = send(instr, *args, registers)
+    registers[instruction_pointer] += 1
+  rescue NoMethodError => e
+    puts registers.to_s
+    break
   end
-
-  puts "Part #{part + 1}: "
-  puts registers[0]
 end
+
+puts "Part 1: "
+puts registers[0]
+
+
+# For part 2 I completely followed https://www.youtube.com/watch?v=74vojWBORpo
