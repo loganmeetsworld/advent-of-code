@@ -78,22 +78,27 @@ def eqrr(a, b, c, before)
   return before
 end
 
-
-input = File.open('test-input.txt').readlines.map(&:chomp)
-registers = [0, 0, 0, 0, 0, 0]
+input = File.open('input.txt').readlines.map(&:chomp)
 instruction_pointer = input.first.scan(/\d+/).first.to_i
-count = input.first.scan(/\d+/).first.to_i
 instructions = input[1..-1]
 
-while true
-  i = instructions[instruction_pointer].split(' ')
-  registers[0] = instruction_pointer
-  send(i[0], i[1].to_i, i[2].to_i, i[3].to_i, registers)
-  instruction_pointer = registers[0]
-  instruction_pointer += 1
-  break if !instructions[instruction_pointer]
-end
+[0, 1].each do |part|
+  registers = [part, 0, 0, 0, 0, 0]
 
-puts "Part 1: "
-puts registers.to_s
-puts registers[0]
+  while true
+    begin
+      ip = registers[instruction_pointer]
+      opcode = instructions[ip].split()
+      args = opcode[1..-1].map(&:to_i)
+      instr = opcode[0]
+      registers = send(instr, *args, registers)
+      registers[instruction_pointer] += 1
+    rescue NoMethodError => e
+      puts registers.to_s
+      break
+    end
+  end
+
+  puts "Part #{part + 1}: "
+  puts registers[0]
+end
