@@ -35,19 +35,17 @@ class Battle
 end
 
 class Warrior
-  attr_accessor :position, :attack_power, :hit_points, :type, :battle, :turn_position
-  def initialize(type, position, turn_position, battle)
+  attr_accessor :position, :attack_power, :hit_points, :type, :battle
+  def initialize(type, position, battle)
     @battle = battle
     @position = position
     @type = type
-    @turn_position = turn_position
     @attack_power = 3
     @hit_points = 200
   end
 
   def move()
-    targets = @battle.warriors.reject { |t| t.type == @type }
-    in_range_targets = targets.map{ |t| find_surrounding(t.position).select{ |i| @battle.field[i] == "." } }.flatten.uniq
+    in_range_targets = @battle.warriors.select{ |t| t.type != @type }.map{ |t| find_surrounding(t.position).select{ |i| @battle.field[i] == "." } }.flatten.uniq
     possible_moves = in_range_targets.map{ |t| find_next_move(t) }.compact.sort
     return false if possible_moves.empty?
     next_position = possible_moves.first.last
@@ -62,28 +60,28 @@ class Warrior
   end
 
   def find_next_move(target)
-    possible_moves = find_surrounding(@position).select{ |i| @battle.field[i] == "." }.to_set
-    options, next_options, seen = [target], [], Set.new
+    surrounding_squares = find_surrounding(@position).select{ |i| @battle.field[i] == "." }
+    possible_moves, next_possible_options, seen = [target], [], Set.new
 
     distance, step = 1, nil
     loop do
-      if options.empty?
-        break if next_options.empty?
+      if possible_moves.empty?
+        break if next_possible_options.empty?
 
-        options = next_options.sort.uniq.reverse
-        next_options = []
+        possible_moves = next_possible_options.sort.uniq.reverse
+        next_possible_options = []
         distance += 1
       end
 
-      position = options.pop
-      if possible_moves.include?(position)
+      position = possible_moves.pop
+      if surrounding_squares.include?(position)
         step = position
         break
       end
 
       seen.add(position)
       find_surrounding(position).each do |i|
-        next_options.push(i) if @battle.field[i] == "." && !seen.include?(i)
+        next_possible_options.push(i) if @battle.field[i] == "." && !seen.include?(i)
       end
     end
 
@@ -111,11 +109,12 @@ puts "Initial battle state:"
 battle.print_battle_state
 
 # Initiate the given warriors on the field, add them to battle.warriors, and also give a warrior the battle
-battle.initial_warrior_positions.each{ |w| battle.warriors.push(Warrior.new(w[:type], w[:position], w[:order], battle)) }
+battle.initial_warrior_positions.each{ |w| battle.warriors.push(Warrior.new(w[:type], w[:position], battle)) }
 
 # Until all the warriors die on a give side, move the battle forward in rounds until a side wins.
 until battle.warriors_on_one_side_all_dead?
   puts "Round ##{battle.rounds + 1}:"
+
   battle.warriors.sort_by(&:position).each do |w|
     w.move() && w.attack() unless w.attack()
   end
