@@ -73,10 +73,10 @@ class Warrior
   end
 
   private def find_next_move(target, squares_surrounding_current_warrior)
-    possible_moves, next_possible_options, seen = [target], [], Set.new
+    possible_moves, next_possible_options, visited = [target], [], Set.new
 
     distance, step = 1, nil
-    loop do
+    while true
       if possible_moves.empty?
         break if next_possible_options.empty?
 
@@ -91,9 +91,9 @@ class Warrior
         break
       end
 
-      seen.add(position)
+      visited.add(position)
       find_surrounding(position).each do |i|
-        next_possible_options.push(i) if @battle.field[i] == "." && !seen.include?(i)
+        next_possible_options.push(i) if @battle.field[i] == "." && !visited.include?(i)
       end
     end
 
@@ -102,7 +102,7 @@ class Warrior
 end
 
 # Initiate the battle with the puzzle input battlefield given
-field = File.open('test-5.txt').read.chomp
+field = File.open('input.txt').read.chomp
 battle = Battle.new(field)
 puts "Initial battle state:"
 battle.print_battle_state
