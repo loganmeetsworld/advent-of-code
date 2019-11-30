@@ -1,5 +1,9 @@
-problem_input = open("input.txt", "r").read().strip().splitlines()
+import sys
+sys.path.append('../../')
+from aoc_automation import problem_input, submit
+import os
 
-answer = 'hold'
+problem_input = problem_input(os.path.abspath(__file__))
 
-print(f"Part 1: {answer}")
+answer = ''
+submit(answer)
