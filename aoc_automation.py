@@ -25,7 +25,7 @@ def submit(path, level, answer):
 
     print(f"For Day {day}, Part {level}, we are submitting answer: {answer}")
 
-    headers = {"cookie": f"session={SESSION_COOKIE}",}
+    headers = {"cookie": f"session={os.environ['SESSION_COOKIE']}",}
     data = {
         "level": level,
         "answer": str(answer)
@@ -33,5 +33,12 @@ def submit(path, level, answer):
 
     response = requests.post(f"https://adventofcode.com/{year}/day/{day}/answer", headers=headers, data=data)
 
-    print(response.text)
-    return response
+    soup = bs4.BeautifulSoup(response.text, "html.parser")
+    message = soup.article.text
+
+    if "That's the right answer" in message:
+        print("Correct!")
+    elif "That's not the right answer" in message:
+        print("Wrong answer!")
+    elif "You gave an answer too recently" in message:
+        print("Wait a bit, too recent a answer...")
