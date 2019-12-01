@@ -7,22 +7,26 @@ def main(path, year, day):
     os.mkdir(day_path)
     os.chdir(day_path)
 
-    python_code = """from aoc_utils import aoc_utils
+    test_cases = """test_cases = [
+    {'level': 1, 'input': None, 'output': None},
+    {'level': 1, 'input': None, 'output': None},
+    {'level': 1, 'input': None, 'output': None},
+]"""
+
+    solution = """from aoc_utils import aoc_utils
+from test_cases import test_cases
 
 def answer(problem_input, part):
     return 0
 
-test_cases = [
-    {'level': 1, 'input': None, 'output': None},
-    {'level': 1, 'input': None, 'output': None},
-    {'level': 1, 'input': None, 'output': None},
-]
 problem_input = aoc_utils.fetch_and_save()
-aoc_utils.test_and_submit(test_cases, problem_input, answer)
-    """
+aoc_utils.test_and_submit(test_cases, problem_input, answer)"""
 
-    with open("solution.py", "w") as solution:
-        solution.write(python_code)
+    with open("solution.py", "w") as s:
+        s.write(solution)
+
+    with open("test_cases.py", "w") as tc:
+        tc.write(test_cases)
 
 if __name__ == '__main__':
     cl = argparse.ArgumentParser(description="This script finds docket ids on NYSCEF.")
