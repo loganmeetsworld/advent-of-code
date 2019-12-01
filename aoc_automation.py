@@ -1,5 +1,6 @@
 import requests
 import os
+import bs4
 
 automation_path = "/".join(os.path.abspath(__file__).split("/")[0:-1])
 SESSION_COOKIE = open(f"{automation_path}/session.txt", "r").read().strip()
