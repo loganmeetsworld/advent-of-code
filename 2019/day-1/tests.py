@@ -1,4 +1,4 @@
-test_cases = [
+cases = [
     {'level': 1, 'input': '12', 'output': '2'},
     {'level': 1, 'input': '14', 'output': '2'},
     {'level': 1, 'input': '1969', 'output': '654'},

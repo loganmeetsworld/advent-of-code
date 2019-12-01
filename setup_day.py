@@ -2,31 +2,35 @@ import argparse
 import os
 import sys
 
+
 def main(path, year, day):
     day_path = f"{path}/{year}/day-{day}/"
     os.mkdir(day_path)
     os.chdir(day_path)
 
-    test_cases = """test_cases = [
+    test_cases = """cases = [
     {'level': 1, 'input': None, 'output': None},
     {'level': 1, 'input': None, 'output': None},
     {'level': 1, 'input': None, 'output': None},
 ]"""
 
     solution = """from aoc_utils import aoc_utils
-from test_cases import test_cases
+from tests import cases
+
 
 def answer(problem_input, part):
     return 0
 
+
 problem_input = aoc_utils.fetch_and_save()
-aoc_utils.test_and_submit(test_cases, problem_input, answer)"""
+aoc_utils.test_and_submit(cases, problem_input, answer)"""
 
     with open("solution.py", "w") as s:
         s.write(solution)
 
-    with open("test_cases.py", "w") as tc:
+    with open("tests.py", "w") as tc:
         tc.write(test_cases)
+
 
 if __name__ == '__main__':
     cl = argparse.ArgumentParser(description="This script finds docket ids on NYSCEF.")
