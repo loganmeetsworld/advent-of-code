@@ -10,8 +10,7 @@ def main(path, year, day):
     python_code = """from aoc_utils import aoc_utils
 
 def answer(problem_input, part):
-    print(problem_input)
-    # TODO: Put your answer here :)
+    return "Put your answer here ;)"
 
 test_cases = [
     {'level': 1, 'input': '', 'output': ''},
