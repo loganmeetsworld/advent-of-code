@@ -29,6 +29,9 @@ def answer(problem_input, part):
 
 path = os.path.abspath(__file__)
 problem_input = aoc_utils.fetch(path, 'input').splitlines()
+# print(aoc_utils.fetch(path, 'problem'))
+
+# part, input, correct answer
 test_cases = [
     [1, ['12'], '2'],
     [1, ['14'], '2'],
