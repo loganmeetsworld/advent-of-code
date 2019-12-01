@@ -1,6 +1,4 @@
 from aoc_utils import aoc_utils
-import os
-
 
 def determine_fuel(mass):
     return int(int(mass) / 3) - 2
@@ -14,7 +12,6 @@ def determine_fuel_amended(mass):
             return continuous_mass
         continuous_mass += mass
 
-
 def answer(problem_input, level):
     total_fuel_requirement = 0
 
@@ -26,7 +23,6 @@ def answer(problem_input, level):
 
     return total_fuel_requirement
 
-
 test_cases = [
     {'level': 1, 'input': '12', 'output': '2'},
     {'level': 1, 'input': '14', 'output': '2'},
@@ -36,6 +32,5 @@ test_cases = [
     {'level': 2, 'input': '1969', 'output': '966'},
     {'level': 2, 'input': '100756', 'output': '50346'}
 ]
-
 problem_input = aoc_utils.fetch_and_save()
 aoc_utils.test_and_submit(test_cases, problem_input, answer)
