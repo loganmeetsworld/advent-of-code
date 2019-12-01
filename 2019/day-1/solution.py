@@ -25,5 +25,4 @@ def answer(problem_input, level):
     return total_fuel_requirement
 
 
-problem_input = aoc_utils.fetch_and_save()
-aoc_utils.test_and_submit(cases, problem_input, answer)
+aoc_utils.test_and_submit(answer, cases)
