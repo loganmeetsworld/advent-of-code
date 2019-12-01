@@ -3,24 +3,41 @@ sys.path.append('../../')
 from aoc_automation import problem_input, submit
 import os
 
-def process_input(input):
-  return input
+def calculate_weight(weight):
+    return int(int(weight) / 3) - 2
 
-part_1_tests_passed = False
-part_2_tests_passed = False
+
+def continuous_calc_weight(weight):
+    total_weight = 0
+
+    while int(weight) > 0:
+        weight = calculate_weight(weight)
+        if weight < 0:
+            return total_weight
+        total_weight += weight
+    
+    return total_weight
+
+
+def day_1(problem_input):
+    total_weight = 0
+
+    for weight in problem_input:
+        total_weight += calculate_weight(weight)
+    
+    return total_weight
+
+
+def day_2(problem_input):
+    total_weight = 0
+
+    for weight in problem_input:
+        total_weight += continuous_calc_weight(weight)
+
+    return total_weight
+
+
 problem_path = os.path.abspath(__file__)
-problem_input = problem_input(problem_path)
-
-
-
-if part_1_tests_passed:
-    submit(problem_path, "1", answer_1)
-
-if part_2_tests_passed:
-    submit(problem_path, "2", answer_2)
-
-
-def all_pass(tests):
-    if tests[0] == False:
-        return False
-    return all(x == tests[0] for x in tests)
+problem_input = problem_input(problem_path).splitlines()
+submit(problem_path, "1", day_1(problem_input))
+submit(problem_path, "2", day_2(problem_input))
