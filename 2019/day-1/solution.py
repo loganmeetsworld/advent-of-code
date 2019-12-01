@@ -1,4 +1,6 @@
 from aoc_utils import aoc_utils
+import os
+
 
 def calculate_weight(weight):
     return int(int(weight) / 3) - 2
@@ -14,6 +16,7 @@ def continuous_calc_weight(weight):
 
 
 def answer(problem_input, level):
+    problem_input = problem_input.splitlines()
     total_weight = 0
 
     for weight in problem_input:
@@ -24,16 +27,17 @@ def answer(problem_input, level):
 
     return total_weight
 
-problem_input = aoc_utils.fetch(2019, 1, 'input').splitlines()
-print(aoc_utils.fetch(2019, 1, 'problem'))
 
 test_cases = [
-    {'level': 1, 'input': ['12'], 'output': '2'},
-    {'level': 1, 'input': ['14'], 'output': '2'},
-    {'level': 1, 'input': ['1969'], 'output': '654'},
-    {'level': 1, 'input': ['100756'], 'output': '33583'},
-    {'level': 2, 'input': ['14'], 'output': '2'},
-    {'level': 2, 'input': ['1969'], 'output': '966'},
-    {'level': 2, 'input': ['100756'], 'output': '50346'}
+    {'level': 1, 'input': '12', 'output': '2'},
+    {'level': 1, 'input': '14', 'output': '2'},
+    {'level': 1, 'input': '1969', 'output': '654'},
+    {'level': 1, 'input': '100756', 'output': '33583'},
+    {'level': 2, 'input': '14', 'output': '2'},
+    {'level': 2, 'input': '1969', 'output': '966'},
+    {'level': 2, 'input': '100756', 'output': '50346'}
 ]
-aoc_utils.test_and_submit(2019, 1, test_cases, problem_input, answer)
+
+year, day = aoc_utils.detect_time()
+problem_input = aoc_utils.fetch_and_save(year, day)
+aoc_utils.test_and_submit(year, day, test_cases, problem_input, answer)
