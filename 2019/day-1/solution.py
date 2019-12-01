@@ -1,5 +1,4 @@
 from aoc_utils import aoc_utils
-import os
 
 def calculate_weight(weight):
     return int(int(weight) / 3) - 2
@@ -7,38 +6,34 @@ def calculate_weight(weight):
 def continuous_calc_weight(weight):
     continuous_weight = 0
 
-    while int(weight) > 0:
+    while True:
         weight = calculate_weight(weight)
         if weight < 0:
             return continuous_weight
         continuous_weight += weight
-    
-    return continuous_weight
 
-def answer(problem_input, part):
+
+def answer(problem_input, level):
     total_weight = 0
 
-    if part == 1:
-        for weight in problem_input:
+    for weight in problem_input:
+        if level == 1:
             total_weight += calculate_weight(weight)
-    else:
-        for weight in problem_input:
+        else:
             total_weight += continuous_calc_weight(weight)
 
     return total_weight
 
-path = os.path.abspath(__file__)
-problem_input = aoc_utils.fetch(path, 'input').splitlines()
-# print(aoc_utils.fetch(path, 'problem'))
+problem_input = aoc_utils.fetch(2019, 1, 'input').splitlines()
+print(aoc_utils.fetch(2019, 1, 'problem'))
 
-# part, input, correct answer
 test_cases = [
-    [1, ['12'], '2'],
-    [1, ['14'], '2'],
-    [1, ['1969'], '654'],
-    [1, ['100756'], '33583'],
-    [2, ['14'], '2'],
-    [2, ['1969'], '966'],
-    [2, ['100756'], '50346']
+    {'level': 1, 'input': ['12'], 'output': '2'},
+    {'level': 1, 'input': ['14'], 'output': '2'},
+    {'level': 1, 'input': ['1969'], 'output': '654'},
+    {'level': 1, 'input': ['100756'], 'output': '33583'},
+    {'level': 2, 'input': ['14'], 'output': '2'},
+    {'level': 2, 'input': ['1969'], 'output': '966'},
+    {'level': 2, 'input': ['100756'], 'output': '50346'}
 ]
-aoc_utils.test_and_submit(path, test_cases, problem_input, answer)
+aoc_utils.test_and_submit(2019, 1, test_cases, problem_input, answer)

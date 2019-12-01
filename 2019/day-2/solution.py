@@ -1,12 +1,10 @@
 from aoc_utils import aoc_utils
-import os
 
 def answer(problem_input, part):
     print(problem_input)
 
-path = os.path.abspath(__file__)
-problem_input = aoc_utils.fetch(path, 'input')
-print(aoc_utils.fetch(path, 'problem'))
+problem_input = aoc_utils.fetch(2019, 2, 'input')
+print(aoc_utils.fetch(2019, 2, 'problem'))
 
 # part, input, correct answer
 test_cases = [
@@ -15,4 +13,4 @@ test_cases = [
     [1, '', ''],
 ]
 
-aoc_utils.test_and_submit(path, test_cases, problem_input, answer)
+aoc_utils.test_and_submit(2019, 2, test_cases, problem_input, answer)
