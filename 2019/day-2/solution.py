@@ -1,10 +1,14 @@
-import sys
-sys.path.append('../../')
-from aoc_automation import problem_input, submit
+from aoc_utils import aoc_utils
 import os
 
-problem_path = os.path.abspath(__file__)
-problem_input = problem_input(problem_path)
+def answer(problem_input, part):
+    print(problem_input)
 
-# submit(problem_path, "1")
-# submit(problem_path, "2")
+path = os.path.abspath(__file__)
+problem_input = aoc_utils.fetch(path, 'input')
+test_cases = [
+    [1, '', ''],
+    [1, '', ''],
+    [1, '', ''],
+]
+aoc_utils.test_and_submit(path, test_cases, problem_input, answer)
