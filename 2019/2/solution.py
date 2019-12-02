@@ -55,8 +55,7 @@ def answer(problem_input, level, test=False):
     if level == 2:
         for a in range(0, 99):
             for b in range(0, 99):
-                output = run(problem_input, [a, b])
-                if output == PART_TWO_OUTPUT:
+                if run(problem_input, [a, b]) == PART_TWO_OUTPUT:
                     return part_two_final_calculation(a, b)
 
 
