@@ -2,8 +2,7 @@ from aoc_utils import aoc_utils
 from tests import cases
 
 
-def determine_fuel(mass):
-    return int(mass / 3) - 2
+def determine_fuel(mass): return int(mass / 3) - 2
 
 
 def determine_fuel_amended(mass):

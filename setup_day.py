@@ -3,14 +3,13 @@ import os
 import sys
 
 
-def main(path, year, day):
-    day_path = f"{path}/{year}/day-{day}/"
+def main(year, day):
+    path = os.getcwd()
+    day_path = f"{path}/{year}/{day}/"
     os.mkdir(day_path)
     os.chdir(day_path)
 
     test_cases = """cases = [
-    {'level': 1, 'input': None, 'output': None},
-    {'level': 1, 'input': None, 'output': None},
     {'level': 1, 'input': None, 'output': None},
 ]"""
 
@@ -35,6 +34,5 @@ if __name__ == '__main__':
     cl = argparse.ArgumentParser(description="This script finds docket ids on NYSCEF.")
     cl.add_argument("--year", required=True, help="the year of AoC we are working with")
     cl.add_argument("--day", required=True, help="the day of AoC we are working with")
-    cl.add_argument("--path", required=True)
     args = cl.parse_args()
-    sys.exit(main(args.path, args.year, args.day))
+    sys.exit(main(args.year, args.day))
