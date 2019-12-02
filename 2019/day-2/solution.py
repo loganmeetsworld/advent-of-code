@@ -6,4 +6,4 @@ def answer(problem_input, part):
     return 0
 
 
-aoc_utils.test_and_submit(cases, answer)
+aoc_utils.run(answer, cases)

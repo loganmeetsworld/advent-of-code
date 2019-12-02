@@ -22,7 +22,7 @@ def answer(problem_input, part):
     return 0
 
 
-aoc_utils.test_and_submit(answer, cases)"""
+aoc_utils.run(answer, cases)"""
 
     with open("solution.py", "w") as s:
         s.write(solution)
