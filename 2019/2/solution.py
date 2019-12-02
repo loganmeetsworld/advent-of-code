@@ -1,50 +1,50 @@
 from aoc_utils import aoc_utils
+from functools import reduce
+import operator
 from tests import cases
 
 
-def mutate_ints(integers, opscode, actionable_ints, new_place):
-    if opscode == 1:
-        new_value = integers[actionable_ints[0]] + integers[actionable_ints[1]]
-    elif opscode == 2:
-        new_value = integers[actionable_ints[0]] * integers[actionable_ints[1]]
+def prod(iterable):
+    return reduce(operator.mul, iterable, 1)
 
-    integers[new_place] = new_value
 
+OPSCODE_INSTR = {1: sum, 2: prod}
+
+
+def next_integers(integers, opscode, int_one, int_two, next_place):
+    manipulator = OPSCODE_INSTR[opscode]
+    integers[next_place] = manipulator([integers[int_one], integers[int_two]])
     return integers
 
 
-def restore_state(integers):
+def restore_1202_state(integers):
     integers[1] = 12
     integers[2] = 2
 
     return integers
 
 
-def answer(problem_input, part):
+def answer(problem_input, level, test=False):
     integers = [int(i) for i in problem_input.split(',')]
-    integers = restore_state(integers)
+    if not test:
+        # None of our tests were made for the 1202 state, so only use when not in test mode.
+        integers = restore_1202_state(integers)
 
     opscode_pos = 0
     opscode = integers[opscode_pos]
-    actionable_ints_min = opscode
-    actionable_ints_max = opscode + 2
-    new_place_pos = opscode_pos + 3
-    actionable_ints = integers[actionable_ints_min:actionable_ints_max]
-    new_place = integers[new_place_pos]
+    int_one, int_two = integers[opscode_pos + 1:opscode_pos + 3]
+    next_place = integers[opscode_pos + 3]
 
     while True:
-        integers = mutate_ints(integers, opscode, actionable_ints, new_place)
+        integers = next_integers(integers, opscode, int_one, int_two, next_place)
         opscode_pos += 4
         opscode = integers[opscode_pos]
         if opscode == 99:
             return integers[0]
-        actionable_ints_min = opscode_pos + 1
-        actionable_ints_max = opscode_pos + 3
-        new_place_pos = opscode_pos + 3
-        actionable_ints = integers[actionable_ints_min:actionable_ints_max]
-        new_place = integers[new_place_pos]
+        int_one, int_two = integers[opscode_pos + 1:opscode_pos + 3]
+        next_place = integers[opscode_pos + 3]
 
     return integers[0]
 
 
-aoc_utils.run(answer)
+aoc_utils.run(answer, cases)
