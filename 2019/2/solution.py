@@ -9,6 +9,7 @@ def prod(iterable):
 
 
 OPSCODE_INSTR = {1: sum, 2: prod}
+PART_TWO_OUTPUT = 19690720
 
 
 def next_integers(integers, opscode, int_one, int_two, next_place):
@@ -17,18 +18,20 @@ def next_integers(integers, opscode, int_one, int_two, next_place):
     return integers
 
 
-def restore_1202_state(integers):
-    integers[1] = 12
-    integers[2] = 2
+def part_two_final_calculation(noun, verb):
+    return 100 * noun + verb
 
+
+def restore_state(integers, pointers):
+    integers[1], integers[2] = pointers
     return integers
 
 
-def answer(problem_input, level, test=False):
+def run(problem_input, pointers, test=False):
     integers = [int(i) for i in problem_input.split(',')]
     if not test:
         # None of our tests were made for the 1202 state, so only use when not in test mode.
-        integers = restore_1202_state(integers)
+        integers = restore_state(integers, pointers)
 
     opscode_pos = 0
     opscode = integers[opscode_pos]
@@ -45,6 +48,17 @@ def answer(problem_input, level, test=False):
         next_place = integers[opscode_pos + 3]
 
     return integers[0]
+
+
+def answer(problem_input, level, test=False):
+    if level == 1:
+        return run(problem_input, [12, 2], test)
+    if level == 2:
+        for a in range(0, 99):
+            for b in range(0, 99):
+                output = run(problem_input, [a, b])
+                if output == PART_TWO_OUTPUT:
+                    return part_two_final_calculation(a, b)
 
 
 aoc_utils.run(answer, cases)
