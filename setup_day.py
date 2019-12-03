@@ -17,11 +17,12 @@ def main(year, day):
 from tests import cases
 
 
-def answer(problem_input, part):
+def answer(problem_input, part, test=False):
     return 0
 
 
-aoc_utils.run(answer, cases)"""
+aoc_utils.run(answer, cases)
+"""
 
     with open("solution.py", "w") as s:
         s.write(solution)
