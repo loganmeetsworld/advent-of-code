@@ -14,7 +14,7 @@ def determine_fuel_amended(mass):
         continuous_mass += mass
 
 
-def answer(problem_input, level):
+def answer(problem_input, level, test=False):
     total_fuel_requirement = 0
     for mass in problem_input.splitlines():
         if level == 1:
