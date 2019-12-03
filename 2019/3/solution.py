@@ -6,51 +6,33 @@ from tests import cases
 
 def travel(wire):
     instructions = wire.split(',')
-    steps = 0
-    location = [0, 0]
-    locations_traveled = {}
+    locations_traveled = [[0, 0]]
 
     for instruction in instructions:
         direction, length = instruction[0], int(instruction[1:])
-        # print(f'{direction}: {length}')
-        if direction == 'R':
-            for i in range(1, length + 1):
-                steps += 1
-                locations_traveled[str([location[0] + i, location[1]])] = steps
-                # print(f'{[location[0] + i, location[1]]}: {steps}')
-            location[0] += i
-        elif direction == 'L':
-            for i in range(1, length + 1):
-                steps += 1
-                locations_traveled[str([location[0] - i, location[1]])] = steps
-                # print(f'{[location[0] - i, location[1]]}: {steps}')
-            location[0] -= i
-        elif direction == 'U':
-            for i in range(1, length + 1):
-                steps += 1
-                locations_traveled[str([location[0], location[1] + i])] = steps
-                # print(f'{[location[0], location[1] + i]}: {steps}')
-            location[1] += i
-        elif direction == 'D':
-            for i in range(1, length + 1):
-                steps += 1
-                locations_traveled[str([location[0], location[1] - i])] = steps
-                # print(f'{[location[0], location[1] - i]}: {steps}')
-            location[1] -= i
+        for i in range(length):
+            location = locations_traveled[-1]
+            if direction == 'R':
+                location[0] += 1
+            elif direction == 'L':
+                location[0] -= i
+            elif direction == 'U':
+                location[1] += i
+            elif direction == 'D':
+                location[1] -= i
+
+            locations_traveled.append(location)
 
     return locations_traveled
 
 
 def find_shortest_distance_to_intersection(locations_1, locations_2):
-    distances_1 = [json.loads(key) for key in list(locations_1.keys())]
-    distances_2 = [json.loads(key) for key in list(locations_2.keys())]
-    intersections = [json.loads(l) for l in list(set([str(a) for a in distances_1]).intersection([str(b) for b in distances_2]))]
+    intersections = set([str(a) for a in locations_1]).intersection([str(b) for b in locations_2])
+    intersections = [json.loads(i) for i in intersections]
+    intersections.remove([0, 0])
+    shortest_distance = min(intersections[1:], key=lambda p: abs(p[0]) + abs(p[1]))
 
-    # Find the intersection with the smallest distance
-    shortest_distance = min([abs(x[0]) + abs(x[1]) for x in intersections])
-    shortest_distance_coords = [y for y in intersections if abs(y[0]) + abs(y[1]) == shortest_distance][0]
-    print(shortest_distance_coords)
-    steps = locations_1[str(shortest_distance_coords)] + locations_2[str(shortest_distance_coords)]
+    steps = [locations_1.index(p) + locations_2.index(p) for p in intersections]
 
     return [shortest_distance, steps]
 
