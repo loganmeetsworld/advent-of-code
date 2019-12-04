@@ -9,8 +9,8 @@ def prod(iterable):
 
 
 OPSCODE_INSTR = {1: sum, 2: prod}
-PART_ONE_INIT_STATE = [12, 2]
-PART_TWO_OUTPUT = 19690720
+LEVEL_ONE_INIT_STATE = [12, 2]
+LEVEL_TWO_OUTPUT = 19690720
 
 
 def next_integers(integers, opscode, int_one, int_two, next_place):
@@ -19,7 +19,7 @@ def next_integers(integers, opscode, int_one, int_two, next_place):
     return integers
 
 
-def part_two_final_calculation(noun, verb):
+def level_two_final_calculation(noun, verb):
     return 100 * noun + verb
 
 
@@ -51,12 +51,12 @@ def run(problem_input, init_state, test=False):
 
 def answer(problem_input, level, test=False):
     if level == 1:
-        return run(problem_input, PART_ONE_INIT_STATE, test)
+        return run(problem_input, LEVEL_ONE_INIT_STATE, test)
     if level == 2:
         for a in range(0, 99):
             for b in range(0, 99):
-                if run(problem_input, [a, b]) == PART_TWO_OUTPUT:
-                    return part_two_final_calculation(a, b)
+                if run(problem_input, [a, b]) == LEVEL_TWO_OUTPUT:
+                    return level_two_final_calculation(a, b)
 
 
 aoc_utils.run(answer, cases)

@@ -17,7 +17,7 @@ def main(year, day):
 from tests import cases
 
 
-def answer(problem_input, part, test=False):
+def answer(problem_input, level, test=False):
     return 0
 
 
