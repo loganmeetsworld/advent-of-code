@@ -5,7 +5,7 @@ from tests import cases
 
 
 def has_repeats(i, level):
-    found = [match[0] for match in re.findall(r'((\w)\2{1,})', str(i))]
+    found = [match[0] for match in re.findall(r'((\d)\2{1,})', str(i))]
     if level == 2:
         found = [f for f in found if len(f) == 2]
     return len(found) > 0
