@@ -32,7 +32,7 @@ aoc_utils.run(answer, cases)
 
 
 if __name__ == '__main__':
-    cl = argparse.ArgumentParser(description="This script finds docket ids on NYSCEF.")
+    cl = argparse.ArgumentParser(description="This script generates python templates for each AoC day.")
     cl.add_argument("--year", required=True, help="the year of AoC we are working with")
     cl.add_argument("--day", required=True, help="the day of AoC we are working with")
     args = cl.parse_args()
