@@ -1,6 +1,7 @@
-from aoc_utils import aoc_utils
 from functools import reduce
 import operator
+
+from aoc_utils import aoc_utils
 from tests import cases
 
 
