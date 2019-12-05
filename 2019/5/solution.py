@@ -2,64 +2,57 @@ from aoc_utils import aoc_utils
 from tests import cases
 
 
+# List of prescriptive jumps we make for a given opcode, this is where we will
+# move the instruction pointer after each "test"
 JUMP_STEPS = {1: 4, 2: 4, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4, 8: 4}
 
 
-def run(problem_input, level):
-    input_id = 1 if level == 1 else 5
+def run(problem_input, input_id):
     integers = [int(i) for i in problem_input.split(",")]
-    opscode_pos, next_pos, first_param = 0, 0, 0
+    opcode_pos = 0
 
-    while True:
-        full_opcode = str(integers[opscode_pos]).zfill(5)
+    while integers[opcode_pos] != 99:
+        # Get the full five digits of the code even if it isn't filled out, then get the actual opcode
+        # which will be 1, 2, 3, 4, 5, 6, 7, or 8
+        full_opcode = str(integers[opcode_pos]).zfill(5)
         opcode = int(full_opcode[-2:])
 
-        if opcode == 99:
-            return first_param
+        # We set the "params" or positions for our three numbers based on their "mode" 
+        # If the mode is 0, that's "position mode" and the param position is the number found at the
+        # index where the index is the value of the param. If the mode is "1" it is "immediate" mode
+        # and just assigned to that number itself
+        first_param = integers[opcode_pos + 1] if full_opcode[2] == '0' else opcode_pos + 1
+        second_param = integers[opcode_pos + 2] if full_opcode[1] == '0' else opcode_pos + 2
+        third_param = integers[opcode_pos + 3] if full_opcode[0] == '0' else opcode_pos + 3
 
-        next_pos = JUMP_STEPS[opcode]
-        position_mode = True if full_opcode[2] == '1' else False
-        immediate_mode = True if full_opcode[1] == '1' else False
-        first_param_pos, second_param_pos, third_param_pos = opscode_pos + 1, opscode_pos + 2, opscode_pos + 3
-
-        first_param = integers[first_param_pos] if position_mode else integers[integers[first_param_pos]]
-        if opcode in [1, 2, 5, 6, 7, 8]:
-            second_param = integers[second_param_pos] if immediate_mode else integers[integers[second_param_pos]]
-            third_param = integers[third_param_pos] 
-
+        # Now the rest is just following exactly what the instructions say happens for each opcode
+        # being careful for 5 and 6 to only use JUMP_STEPS when we haven't already overwritten the 
+        # opcode_pos
         if opcode == 1:
-            integers[third_param] = first_param + second_param
+            integers[third_param] = integers[first_param] + integers[second_param]
         elif opcode == 2:
-            integers[third_param] = first_param * second_param
+            integers[third_param] = integers[first_param] * integers[second_param]
         elif opcode == 3:
-            # opcode 3 takes a single integer as input and saves it 
-            # to the position given by its only param (first param)
-            integers[integers[first_param_pos]] = input_id
+            integers[first_param] = input_id
         elif opcode == 5:
-            if first_param != 0:
-               opscode_pos = second_param
+            opcode_pos = integers[second_param] if integers[first_param] != 0 else opcode_pos + JUMP_STEPS[opcode]
         elif opcode == 6:
-            if first_param == 0:
-               opscode_pos = second_param
+            opcode_pos = integers[second_param] if integers[first_param] == 0 else opcode_pos + JUMP_STEPS[opcode]
         elif opcode == 7:
-            if first_param < second_param:
-                integers[third_param_pos] = 1
-            else:
-                integers[third_param_pos] = 0
+            integers[third_param] = 1 if integers[first_param] < integers[second_param] else 0
         elif opcode == 8:
-            if first_param == second_param:
-                integers[third_param_pos] = 1
-            else:
-                integers[third_param_pos] = 0
-            
-        if opcode not in [5, 6]:
-            opscode_pos += next_pos
+            integers[third_param] = 1 if integers[first_param] == integers[second_param] else 0
 
-    return first_param
+        if opcode in [1, 2, 3, 4, 7, 8]:
+            opcode_pos += JUMP_STEPS[opcode]
+
+    # Our first available param, which should be 0 until the end, should be our output
+    return integers[first_param]
 
 
 def answer(problem_input, level, test=False):
-    return run(problem_input, level)
+    input_id = 1 if level == 1 else 5
+    return run(problem_input, input_id)
 
 
 aoc_utils.run(answer, cases)
