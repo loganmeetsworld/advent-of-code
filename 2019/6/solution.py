@@ -5,13 +5,13 @@ from tests import cases
 
 
 def orbit_count(edges):
-    graph = nx.DiGraph()
+    graph = nx.Graph()
     [graph.add_edge(edge[0], edge[1]) for edge in edges]
     total = 0
     for node in graph.nodes:
         total += len(nx.descendants(graph, node))
-
     return total
+
 
 def shortest_path(edges):
     graph = nx.Graph()
