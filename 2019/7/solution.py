@@ -1,3 +1,5 @@
+import itertools
+
 from aoc_utils import aoc_utils
 from tests import cases
 
@@ -6,8 +8,8 @@ from tests import cases
 JUMP_STEPS = {1: 4, 2: 4, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4, 8: 4}
 
 
-def run(integers, input_id):
-    opcode_pos = 0
+def run(integers, inputs):
+    opcode_pos, input_idx = 0, 0
 
     while integers[opcode_pos] != 99:
         # Get the full five digits of the code even if it isn't filled out, then get the actual opcode
@@ -31,7 +33,8 @@ def run(integers, input_id):
         elif opcode == 2:
             integers[third_param] = integers[first_param] * integers[second_param]
         elif opcode == 3:
-            integers[first_param] = input_id
+            integers[first_param] = inputs[input_idx]
+            input_idx += 1
         elif opcode == 5:
             opcode_pos = integers[second_param] if integers[first_param] != 0 else opcode_pos + JUMP_STEPS[opcode]
         elif opcode == 6:
@@ -48,14 +51,12 @@ def run(integers, input_id):
     return integers[first_param]
 
 
-def calculate_max_thruster_signal(phase_settings, amp_controller_software):
-    amp_output = 0
+def calculate_thruster_signal(phase_settings, amp_controller_software):
+    input_signal = 0
     for setting in phase_settings:
-        print(f'setting: {setting}')
-        print(f'output: {amp_output}')
-        amp_output += run(amp_controller_software, setting)
+        input_signal = run(amp_controller_software, [setting, input_signal])
     
-    return amp_output
+    return input_signal
 
 
 def answer(problem_input, level, test=False):
@@ -63,12 +64,18 @@ def answer(problem_input, level, test=False):
         phase_settings, amp_controller_software = problem_input
         phase_settings = [int(s) for s in phase_settings.split(',')]
         amp_controller_software = [int(s) for s in amp_controller_software.split(',')]
-        max_thruster_signal = calculate_max_thruster_signal(phase_settings, amp_controller_software)
-        return max_thruster_signal
+        thruster_signal = calculate_thruster_signal(phase_settings, amp_controller_software)
+        return thruster_signal
     else:
-        amp_controller_software = problem_input
+        max_result = 0
+        for perms in itertools.permutations([0,1,2,3,4]):
+            phase_settings = list(perms)
+            amp_controller_software = [int(s) for s in problem_input.split(',')]
+            result = calculate_thruster_signal(phase_settings, amp_controller_software)
+            if result > max_result:
+                max_result = result
 
-    return 0
+        return max_result
 
 
 aoc_utils.run(answer, cases)
