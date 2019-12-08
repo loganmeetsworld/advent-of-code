@@ -14,23 +14,13 @@ class Intcode:
     def run(self, inputs):
         self.inputs += inputs
 
-        while self.opcode_pos < len(self.integers):
-            # Get the full five digits of the code even if it isn't filled out, then get the actual opcode
-            # which will be 1, 2, 3, 4, 5, 6, 7, or 8
+        while True:
             full_opcode = str(self.integers[self.opcode_pos]).zfill(5)
             opcode = int(full_opcode[-2:])
-
-            # We set the "params" or positions for our three numbers based on their "mode" 
-            # If the mode is 0, that's "position mode" and the param position is the number found at the
-            # index where the index is the value of the param. If the mode is "1" it is "immediate" mode
-            # and just assigned to that number itself
             first_param = self.integers[self.opcode_pos + 1] if full_opcode[2] == '0' else self.opcode_pos + 1
             second_param = self.integers[self.opcode_pos + 2] if full_opcode[1] == '0' else self.opcode_pos + 2
             third_param = self.integers[self.opcode_pos + 3] if full_opcode[0] == '0' else self.opcode_pos + 3
 
-            # Now the rest is just following exactly what the instructions say happens for each opcode
-            # being careful for 5 and 6 to only use JUMP_STEPS when we haven't already overwritten the 
-            # self.opcode_pos
             if opcode == 1:
                 self.integers[third_param] = self.integers[first_param] + self.integers[second_param]
             elif opcode == 2:
@@ -51,70 +41,54 @@ class Intcode:
             elif opcode == 99:
                 break
 
-            if opcode in [1, 2, 3, 4, 7, 8]:
-                self.opcode_pos += self.jump_steps[opcode]
+            if opcode in [1, 2, 3, 7, 8]: self.opcode_pos += self.jump_steps[opcode]
 
 
-def calculate_thruster_signal(phase_settings, amp_controller_software, level):
-    input_signal, input_signals = 0, []
-    intcodes = [Intcode(amp_controller_software, [setting]) for setting in phase_settings]
-    if level == 2:
-        while input_signal is not None:
-            input_signals.append(input_signal)
-            for intcode in intcodes:
-                input_signal = intcode.run([input_signal])
-        return max(input_signals)
-    else:
-        input_signals.append(input_signal)
+def calculate_thruster_signal(settings, amp_controller_software, level):
+    intcodes = [Intcode(amp_controller_software, [setting]) for setting in settings]
+    if level == 1:
+        result = 0
         for intcode in intcodes:
-            input_signal = intcode.run([input_signal])
-        return input_signal
-    
-
-def calculate_thruster_signal_part_2(amp_controller_software):
-    input_signals = []
-
-    for phase_settings in itertools.permutations(range(5, 10)):
-        input_signal = 0
-        intcodes = [Intcode(amp_controller_software, [setting]) for setting in phase_settings]
-        while input_signal is not None:
-            input_signals.append(input_signal)
+            result = intcode.run([result])
+        return result
+    elif level == 2:
+        result, results = 0, []
+        while result is not None:
             for intcode in intcodes:
-                input_signal = intcode.run([input_signal])
+                results.append(result)
+                result = intcode.run([result])
 
-    return max(input_signals)
+        return max(list(filter(lambda a: a != None, results)))
+
+
+def calculate_max_thruster_signal_part_1(amp_controller_software, level):
+    results = []
+    for settings in itertools.permutations(range(5)):
+        result = calculate_thruster_signal(settings, amp_controller_software, level)
+        results.append(result)
+    return max(results)
+
+
+def calculate_max_thruster_signal_part_2(amp_controller_software, level):
+    results = []
+    for settings in itertools.permutations(range(5,10)):
+        result = calculate_thruster_signal(settings, amp_controller_software, level)
+        results += result
+
+    return max(results)
 
 
 def answer(problem_input, level, test=False):
     if test:
-        phase_settings, amp_controller_software = problem_input
-        phase_settings = [int(s) for s in phase_settings.split(',')]
-        amp_controller_software = [int(s) for s in amp_controller_software.split(',')]
-        thruster_signal = calculate_thruster_signal(phase_settings, amp_controller_software, level)
-        return thruster_signal
+        settings, amp_controller_software = problem_input
+        settings, amp_controller_software = [int(s) for s in settings.split(',')], [int(s) for s in amp_controller_software.split(',')]
+        return calculate_thruster_signal(settings, amp_controller_software, level)
     else:
+        amp_controller_software = [int(s) for s in problem_input.split(',')]
         if level == 1:
-            max_result = 0
-            for perms in itertools.permutations([0, 1, 2, 3, 4]):
-                phase_settings = list(perms)
-                amp_controller_software = [int(s) for s in problem_input.split(',')]
-                result = calculate_thruster_signal(phase_settings, amp_controller_software, level)
-                if result > max_result:
-                    max_result = result
-
-            return max_result
-        else:
-            amp_controller_software = [int(s) for s in problem_input.split(',')]
-            return calculate_thruster_signal_part_2(amp_controller_software)
-            # max_results = []
-            # amp_controller_software = [int(s) for s in problem_input.split(',')]
-            # for perms in itertools.permutations([5, 6, 7, 8, 9]):
-            #     phase_settings = list(perms)
-            #     result = calculate_thruster_signal(phase_settings, amp_controller_software, level)
-            #     print(result)
-            #     max_results += result
-
-            # return max(max_results)
+            return calculate_max_thruster_signal_part_1(amp_controller_software, level)
+        elif level == 2:
+            return calculate_max_thruster_signal_part_2(amp_controller_software, level)
 
 
 aoc_utils.run(answer, cases)
