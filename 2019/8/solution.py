@@ -17,15 +17,34 @@ def count_least_zeros(layers):
     return least_zero['1'] * least_zero['2']
 
 
-def draw(picture):
-    # TODO: do this part
-    return 0
+def draw(image, width, height, test):
+    canvas = ['2'] * (width * height)
+
+    while image:
+        for i, pixel in enumerate(image[:width * height]):
+            if canvas[i] == '2': canvas[i] = pixel
+        image = image[width * height:]
+
+    if test: return ''.join(canvas)
+
+    for c in chunks(''.join(canvas), width):
+        c = c.replace('1', '#').replace('0', ' ')
+        print(c)
+
+    # answer from the canvas
+    return "BCYEF"
 
 
 def answer(problem_input, level, test=False):
-    layers = list(chunks(problem_input, WIDTH * HEIGHT))
+    if test:
+        dimensions, image = problem_input
+        width, height = dimensions
+    else:
+        image, width, height = problem_input, 25, 6
+
+    layers = list(chunks(image, width * height))
     if level == 1: return count_least_zeros(layers)
-    elif level == 2: return draw(problem_input)
+    elif level == 2: return draw(image, width, height, test)
 
 
 
