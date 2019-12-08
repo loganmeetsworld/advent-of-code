@@ -73,7 +73,7 @@ def calculate_max_thruster_signal_part_2(amp_controller_software, level):
     results = []
     for settings in itertools.permutations(range(5,10)):
         result = calculate_thruster_signal(settings, amp_controller_software, level)
-        results += result
+        results.append(result)
 
     return max(results)
 
