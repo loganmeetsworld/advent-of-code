@@ -4,7 +4,7 @@ from tests import cases
 
 class Intcode:
     def __init__(self, integers, inputs=[]):
-        self.integers = integers.copy() + [0] * 100000000
+        self.integers = integers.copy() + [0] * 10000
         self.inputs = inputs
         self.opcode_pos = 0
         self.relative_base = 0
@@ -24,29 +24,28 @@ class Intcode:
         elif full_opcode[2] == '1':
             first_param = self.opcode_pos + 1
         elif full_opcode[2] == '2':
-            first_param = self.opcode_pos + self.relative_base
+            first_param = self.integers[self.opcode_pos + 1] + self.relative_base
 
         if opcode in [1, 2, 7, 8, 5, 6]:
             if full_opcode[1] == '0':
-                second_param = self.integers[self.opcode_pos + 1]
+                second_param = self.integers[self.opcode_pos + 2]
             elif full_opcode[1] == '1':
-                second_param = self.opcode_pos + 1
+                second_param = self.opcode_pos + 2
             elif full_opcode[1] == '2':
-                second_param = self.opcode_pos + self.relative_base
+                second_param = self.integers[self.opcode_pos + 2] + self.relative_base
 
         if opcode in [1, 2, 7, 8]:
             if full_opcode[0] == '0':
-                third_param = self.integers[self.opcode_pos + 1]
+                third_param = self.integers[self.opcode_pos + 3]
             elif full_opcode[0] == '1':
-                third_param = self.opcode_pos + 1
+                third_param = self.opcode_pos + 3
             elif full_opcode[0] == '2':
-                third_param = self.opcode_pos + self.relative_base
+                third_param = self.integers[self.opcode_pos + 3] + self.relative_base
 
         return first_param, second_param, third_param
 
-    def run(self, inputs):
-        self.inputs += inputs
-        while True:
+    def run(self):
+        while self.integers[self.opcode_pos] != 99:
             opcode = self.build_opcode()
             first_param, second_param, third_param = self.build_params(opcode)
             if opcode == 1:
@@ -56,8 +55,7 @@ class Intcode:
             elif opcode == 3:
                 self.integers[first_param] = self.inputs.pop(0)
             elif opcode == 4:
-                self.opcode_pos += self.jump_steps[opcode]
-                return self.integers[first_param]
+                print(self.integers[first_param])
             elif opcode == 5:
                 self.opcode_pos = self.integers[second_param] if self.integers[first_param] != 0 else self.opcode_pos + self.jump_steps[opcode]
             elif opcode == 6:
@@ -68,14 +66,13 @@ class Intcode:
                 self.integers[third_param] = 1 if self.integers[first_param] == self.integers[second_param] else 0
             elif opcode == 9:
                 self.relative_base += self.integers[first_param]
-            elif opcode == 99:
-                break
             if opcode in [1, 2, 3, 7, 8, 9]: self.opcode_pos += self.jump_steps[opcode]
 
+        return self.integers
 
 def calculate_boost_keycode(program):
-    intcode_computer = Intcode(program)
-    return intcode_computer.run([1])
+    intcode_computer = Intcode(program, [1])
+    return intcode_computer.run()
 
 
 def answer(problem_input, level, test=False):
