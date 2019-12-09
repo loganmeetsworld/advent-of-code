@@ -16,7 +16,8 @@ class Intcode:
 
     def build_params(self, opcode):
         first_param, second_param, third_param = None, None, None
-        if opcode == 99: return first_param, second_param, third_param
+        if opcode == 99:
+            return first_param, second_param, third_param
         full_opcode = str(self.integers[self.opcode_pos]).zfill(5)
 
         if full_opcode[2] == '0':
@@ -48,6 +49,7 @@ class Intcode:
         while self.integers[self.opcode_pos] != 99:
             opcode = self.build_opcode()
             first_param, second_param, third_param = self.build_params(opcode)
+
             if opcode == 1:
                 self.integers[third_param] = self.integers[first_param] + self.integers[second_param]
             elif opcode == 2:
@@ -55,7 +57,7 @@ class Intcode:
             elif opcode == 3:
                 self.integers[first_param] = self.inputs.pop(0)
             elif opcode == 4:
-                print(self.integers[first_param])
+                return self.integers[first_param]
             elif opcode == 5:
                 self.opcode_pos = self.integers[second_param] if self.integers[first_param] != 0 else self.opcode_pos + self.jump_steps[opcode]
             elif opcode == 6:
@@ -66,9 +68,9 @@ class Intcode:
                 self.integers[third_param] = 1 if self.integers[first_param] == self.integers[second_param] else 0
             elif opcode == 9:
                 self.relative_base += self.integers[first_param]
+
             if opcode in [1, 2, 3, 7, 8, 9]: self.opcode_pos += self.jump_steps[opcode]
 
-        return self.integers
 
 def calculate_boost_keycode(program):
     intcode_computer = Intcode(program, [1])
