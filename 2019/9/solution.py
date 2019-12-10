@@ -46,7 +46,7 @@ class Intcode:
         return first_param, second_param, third_param
 
     def run(self):
-        while self.integers[self.opcode_pos] != 99:
+        while True:
             opcode = self.build_opcode()
             first_param, second_param, third_param = self.build_params(opcode)
 
@@ -68,19 +68,20 @@ class Intcode:
                 self.integers[third_param] = 1 if self.integers[first_param] == self.integers[second_param] else 0
             elif opcode == 9:
                 self.relative_base += self.integers[first_param]
+            elif opcode == 99:
+                break
 
             if opcode in [1, 2, 3, 7, 8, 9]: self.opcode_pos += self.jump_steps[opcode]
 
 
-def calculate_boost_keycode(program):
-    intcode_computer = Intcode(program, [1])
+def calculate_boost_keycode(program, level):
+    intcode_computer = Intcode(program, [level])
     return intcode_computer.run()
 
 
 def answer(problem_input, level, test=False):
     boost_program = [int(i) for i in problem_input.split(',')]
-
-    return calculate_boost_keycode(boost_program)
+    return calculate_boost_keycode(boost_program, level)
 
 
 aoc_utils.run(answer, cases)
