@@ -1,13 +1,15 @@
+import itertools
+import numpy
+
 from aoc_utils import aoc_utils
 from tests import cases
 
 
 def answer(problem_input, level, test=False):
-    year = 2020
     numbers = [int(i) for i in problem_input.splitlines()]
-    for num in numbers:
-        if (year - num) in numbers:
-            return num * (year - num)
+    for combo in itertools.combinations(numbers, level + 1):
+        if sum(combo) == 2020:
+            return numpy.prod(combo)
 
 
 aoc_utils.run(answer, cases)
