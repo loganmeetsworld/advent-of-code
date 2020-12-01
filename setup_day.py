@@ -4,6 +4,7 @@ import sys
 
 
 def main(year, day):
+    os.system('./session.sh')
     path = os.getcwd()
     day_path = f"{path}/{year}/{day}/"
     os.mkdir(day_path)
