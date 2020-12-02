@@ -9,7 +9,9 @@ def validate_rule(rule, level):
     if level == 1:
         return password.count(letter) >= int(mn) and password.count(letter) <= int(mx)
     elif level == 2:
-        return (password[int(mn) - 1] == letter or password[int(mx) - 1] == letter) and not (password[int(mn) - 1] == letter and password[int(mx) - 1] == letter)
+        min_pos = password[int(mn) - 1]
+        max_pos = password[int(mx) - 1]
+        return min_pos == letter or max_pos == letter ^ min_pos == letter and max_pos == letter
 
 
 def answer(problem_input, level, test=False):
