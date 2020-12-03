@@ -4,11 +4,10 @@ from aoc_utils import aoc_utils
 from tests import cases
 
 
-def traverse(problem_input, slopes):
-    rows = problem_input.splitlines()
+def traverse(rows, slopes):
     tree_counts = []
     for slope in slopes:
-        tree_pos, tree_count, row_pos = 0, 0, 0
+        tree_pos, row_pos, tree_count = 0, 0, 0
         while row_pos < len(rows):
             row = rows[row_pos]
             if row[tree_pos % len(row)] == '#':
@@ -20,10 +19,13 @@ def traverse(problem_input, slopes):
 
 
 def answer(problem_input, level, test=False):
+    rows = problem_input.splitlines()
+    slopes = [[3, 1]]
     if level == 1:
-        return traverse(problem_input, [[3, 1]])
+        return traverse(rows, slopes)
     elif level == 2:
-        return traverse(problem_input, [[1, 1], [3, 1], [5, 1], [7, 1], [1, 2]])
+        slopes += [[1, 1], [5, 1], [7, 1], [1, 2]]
+        return traverse(rows, slopes)
 
 
 aoc_utils.run(answer, cases)
