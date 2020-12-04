@@ -1,37 +1,51 @@
+import re
+
 from aoc_utils import aoc_utils
 from tests import cases
 
 REQUIRED_ATTRIBUTES = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
+VALID_EYE_COLORS = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
 
 
 def validate_attrs(atts):
     return [a for a in atts if len(list(set(REQUIRED_ATTRIBUTES) - set(a.keys()))) == 0]
 
-# byr (Birth Year) - four digits; at least 1920 and at most 2002.
-# iyr (Issue Year) - four digits; at least 2010 and at most 2020.
-# eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
-# hgt (Height) - a number followed by either cm or in:
 
-# If cm, the number must be at least 150 and at most 193.
-# If in, the number must be at least 59 and at most 76.
+def invalid_hgt(h):
+    if not h.endswith('cm') and not h.endswith('in'):
+        return True
 
+    if h.endswith('cm'):
+        return int(h.split('cm')[0]) < 150 or int(h.split('cm')[0]) > 193
 
-# hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
-# ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
-# pid (Passport ID) - a nine-digit number, including leading zeroes.
-# cid (Country ID) - ignored, missing or not.
+    if h.endswith('in'):
+        return int(h.split('in')[0]) < 59 or int(h.split('in')[0]) > 76
+
 
 def validate_passport(e):
-    if int(e['byr']) < 1920 or > 2002:
+    if int(e['byr']) < 1920 or int(e['byr']) > 2002:
         return False
 
-    if int(e['iyr']) < 2010 or > 2020:
+    if int(e['iyr']) < 2010 or int(e['iyr']) > 2020:
         return False
 
-    if int(e['eyr']) < 2020 or > 2030:
+    if int(e['eyr']) < 2020 or int(e['eyr']) > 2030:
+        return False
+
+    if invalid_hgt(e['hgt']):
+        return False
+
+    if not re.match('#[0-9a-f]{6}', e['hcl']):
+        return False
+
+    if e['ecl'] not in VALID_EYE_COLORS:
+        return False
+
+    if not re.match('^\d{9}$', e['pid']):
         return False
 
     return True
+
 
 def answer(problem_input, level, test=False):
     elves = []
