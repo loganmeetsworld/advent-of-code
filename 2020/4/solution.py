@@ -3,11 +3,11 @@ import re
 from aoc_utils import aoc_utils
 from tests import cases
 
-REQUIRED_FIELDS = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
-VALID_EYE_COLORS = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
+REQUIRED_FIELDS = ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid']
+VALID_EYE_COLORS = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
 
 
-def validate_fields(atts):
+def valid_fields(atts):
     return [a for a in atts if len(list(set(REQUIRED_FIELDS) - set(a.keys()))) == 0]
 
 
@@ -21,7 +21,7 @@ def invalid_hgt(h):
     return True
 
 
-def validate_passport(e):
+def valid_passport(e):
     if int(e['byr']) < 1920 or int(e['byr']) > 2002:
         return False
 
@@ -47,15 +47,15 @@ def validate_passport(e):
 
 
 def answer(problem_input, level, test=False):
-    elves = []
-    for e in problem_input.split("\n\n"):
-        edata = {}
-        for field in e.replace("\n", " ").split(" "):
-            edata[field.split(':')[0]] = field.split(':')[1]
-        elves.append(edata)
+    passports = []
+    for passport in problem_input.split('\n\n'):
+        data = {}
+        for field in passport.replace('\n', ' ').split(' '):
+            data[field.split(':')[0]] = field.split(':')[1]
+        passports.append(data)
 
-    complete_passports = validate_fields(elves)
-    return len(complete_passports) if level == 1 else len([e for e in complete_passports if validate_passport(e)])
+    complete_passports = valid_fields(passports)
+    return len(complete_passports) if level == 1 else len([e for e in complete_passports if valid_passport(e)])
 
 
 aoc_utils.run(answer, cases)
