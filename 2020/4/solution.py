@@ -7,7 +7,7 @@ REQUIRED_ATTRIBUTES = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
 VALID_EYE_COLORS = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
 
 
-def validate_attrs(atts):
+def validate_completeness(atts):
     return [a for a in atts if len(list(set(REQUIRED_ATTRIBUTES) - set(a.keys()))) == 0]
 
 
@@ -55,7 +55,7 @@ def answer(problem_input, level, test=False):
             edata[attribute.split(':')[0]] = attribute.split(':')[1]
         elves.append(edata)
 
-    complete_passports = validate_attrs(elves)
+    complete_passports = validate_completeness(elves)
     if level == 1:
         return len(complete_passports)
     else:
