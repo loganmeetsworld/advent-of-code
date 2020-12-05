@@ -20,8 +20,9 @@ def answer(problem_input, level, test=False):
         row, col = bsp(boarding_pass[:7], 'B', 127), bsp(boarding_pass[7:], 'R', 7)
         seat_ids.append(row * 8 + col)
 
-    max_seat_id, min_seat_id = max(seat_ids),  min(seat_ids)
-    return max_seat_id if level == 1 else set(range(min_seat_id, max_seat_id)) - set(seat_ids)
+    seat_ids.sort()
+    max_seat_id, min_seat_id = seat_ids[-1], seat_ids[0]
+    return max_seat_id if level == 1 else (set(range(min_seat_id, max_seat_id)) - set(seat_ids)).pop()
 
 
 aoc_utils.run(answer, cases)
