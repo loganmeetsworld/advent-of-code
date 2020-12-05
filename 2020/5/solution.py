@@ -3,7 +3,7 @@ from tests import cases
 
 
 def binary_string_to_decimal(bstring):
-    return int(bstring.replace('B', '1').replace('F', '0').replace('L', '0').replace('R', '1'), 2)
+    return int(bstring.translate(str.maketrans("FBLR", "0101")), 2)
 
 
 def answer(problem_input, level, test=False):
