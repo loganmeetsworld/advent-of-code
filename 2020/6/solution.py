@@ -3,7 +3,8 @@ from tests import cases
 
 
 def answer(problem_input, level, test=False):
-    return 0
+    counts = [len(set(group.replace('\n', ''))) for group in problem_input.split('\n\n')]
+    return sum(counts)
 
 
 aoc_utils.run(answer, cases)
