@@ -4,40 +4,31 @@ import re
 from aoc_utils import aoc_utils
 from tests import cases
 
-PARENT_BAG_REGEX = r'^(\w+ \w+)'
-CHILD_BAG_REGEX = r'(\d+) (\w+ \w+)'
-MY_BAG = 'shiny gold'
 
-
-def bag_possibilities(bag, bag_count_map):
+def find_bag_locations(inner_bag_map, bname):
+    bag = inner_bag_map[bname]
     for inner_bag in bag:
-        bag = set(bag) | bag_possibilities(bag_count_map[inner_bag], bag_count_map)
-
+        bag = set(bag) | find_bag_locations(inner_bag_map, inner_bag)
     return set(bag)
 
 
-def count_bags_in_bags(bag, bag_size_map):
-    count = 0
+def find_bags_in_bag(bag_size_map, bag):
+    count = 1
     for num_bags, bname in bag_size_map[bag]:
-        count += int(num_bags) * count_bags_in_bags(bname, bag_size_map)
-
-    return count + 1
+        count += int(num_bags) * find_bags_in_bag(bag_size_map, bname)
+    return count
 
 
 def answer(problem_input, level, test=False):
-    bag_count_map = defaultdict(list)
+    inner_bag_map = defaultdict(list)
     bag_size_map = {}
     for line in problem_input.splitlines():
-        parent_bag = re.search(PARENT_BAG_REGEX, line)[0]
-        child_bags = re.findall(CHILD_BAG_REGEX, line)
+        parent_bag, child_bags = re.search(r'^(\w+ \w+)', line)[0], re.findall(r'(\d+) (\w+ \w+)', line)
         bag_size_map[parent_bag] = child_bags
         for bag in child_bags:
-            bag_count_map[bag[1]].append(parent_bag)
+            inner_bag_map[bag[1]].append(parent_bag)
 
-    if level == 1:
-        return len(bag_possibilities(bag_count_map[MY_BAG], bag_count_map))
-    else:
-        return count_bags_in_bags(MY_BAG, bag_size_map) - 1
+    return len(find_bag_locations(inner_bag_map, 'shiny gold')) if level == 1 else find_bags_in_bag(bag_size_map, 'shiny gold') - 1
 
 
 aoc_utils.run(answer, cases)
