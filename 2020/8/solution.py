@@ -9,7 +9,7 @@ class Console():
         self.run_length = 0
         self.accumulator = 0
         self.pointer = 0
-        self.instrs = [i.split(' ') for i in program.splitlines()]
+        self.instrs = program
         self.travel_log = []
         self.fixed = False
 
@@ -37,24 +37,24 @@ class Console():
 def build_inputs(program):
     inputs = []
     translate = {'jmp': 'nop', 'nop': 'jmp'}
-    program = [i.split(' ') for i in program.splitlines()]
     for pos, (command, value) in enumerate(program):
-        p = copy.copy(program)
-        if command == 'jmp' or command == 'nop':
-            p[pos][0] = translate[command]
-        inputs.append('\n'.join([' '.join(i) for i in p]))
+        if command in translate.keys():
+            new_program = copy.deepcopy(program)
+            new_program[pos][0] = translate[command]
+            inputs.append(new_program)
     return inputs
 
 
 def answer(problem_input, level, test=False):
+    program = [i.split(' ') for i in problem_input.splitlines()]
     if level == 1:
-        console = Console(problem_input)
+        console = Console(program)
         console.accumulate()
         return console.accumulator
     else:
-        possible_inputs = build_inputs(problem_input)
-        for i in possible_inputs:
-            console = Console(i)
+        programs = build_inputs(program)
+        for program in programs:
+            console = Console(program)
             console.accumulate()
             if console.fixed:
                 return console.accumulator
