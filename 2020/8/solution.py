@@ -8,9 +8,11 @@ class Console():
         self.accumulator = 0
         self.pointer = 0
         self.instrs = [i.split(' ') for i in program.splitlines()]
+        self.travel_log = []
 
     def translate(self):
-        command, value = self.instrs[self.pointer]
+        self.travel_log.append(self.pointer % len(self.instrs))
+        command, value = self.instrs[self.pointer % len(self.instrs)]
         if command == 'acc':
             self.accumulator += int(value)
             self.pointer += 1
@@ -22,7 +24,7 @@ class Console():
         self.run_length += 1
 
     def accumulate(self):
-        while self.run_length < len(self.instrs):
+        while self.pointer not in self.travel_log:
             self.translate()
 
 
