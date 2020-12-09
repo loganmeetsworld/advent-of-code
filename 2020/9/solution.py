@@ -9,7 +9,7 @@ def valid_check(n, seen):
     return n in sums
 
 
-def find_encryption_weakness(invalid_number, preamble, numbers):
+def find_encryption_weakness(invalid_number, numbers):
     for contiguous_range in range(2, len(numbers)):
         for number in range(len(numbers) - contiguous_range):
             range_end = number + contiguous_range
@@ -28,7 +28,7 @@ def answer(problem_input, level, test=False):
             invalid_number = n
         seen.append(n)
 
-    return invalid_number if level == 1 else find_encryption_weakness(invalid_number, preamble, numbers)
+    return invalid_number if level == 1 else find_encryption_weakness(invalid_number, numbers)
 
 
 aoc_utils.run(answer, cases)
