@@ -26,6 +26,7 @@ def answer(problem_input: str, level: int, test=False) -> int:
     for n in numbers[preamble:]:
         if not valid_check(n, seen[-preamble:]):
             invalid_number = n
+            break
         seen.append(n)
 
     return invalid_number if level == 1 else find_encryption_weakness(invalid_number, numbers)
