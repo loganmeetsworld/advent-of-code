@@ -3,6 +3,7 @@ from tests import cases
 
 
 def find_differences(numbers: list, delta: int) -> int:
+    numbers.append(0)
     differences = 0
     for pos, n in enumerate(numbers):
         if len(numbers) == pos + 1:
@@ -13,17 +14,22 @@ def find_differences(numbers: list, delta: int) -> int:
 
 
 def find_arrangements(numbers: list) -> int:
-    return 0
+    arrangement_tracker = {0: 1}
+    for n in numbers:
+        arrangement_tracker[n] = sum([arrangement_tracker.get(n - i, 0) for i in [1, 2, 3]])
+
+    return arrangement_tracker[max(numbers)]
 
 
 def answer(problem_input, level, test=False):
-    numbers = sorted([int(i) for i in problem_input.splitlines()], reverse=True)
-    numbers.insert(0, max(numbers) + 3)
-    numbers.append(0)
+    numbers = [int(i) for i in problem_input.splitlines()]
+    numbers += [max(numbers) + 3]
     if level == 1:
+        numbers = sorted(numbers, reverse=True)
         ones, threes = find_differences(numbers, 1), find_differences(numbers, 3)
         return threes * ones
     elif level == 2:
+        numbers = sorted(numbers)
         return find_arrangements(numbers)
 
 
