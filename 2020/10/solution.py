@@ -14,10 +14,16 @@ def find_differences(numbers: list, delta: int) -> int:
 
 
 def find_arrangements(numbers: list) -> int:
+    # Tracker for all adapter's compatabilities starting with a single adapter
+    # If there were no adapter, there would be 1 compatible pattern
     arrangement_tracker = {0: 1}
     for n in numbers:
+        # For each number, sum its adapter compatibility at the next 3 positions
+        # And save it as the compatability number for that position
+        # If there is no adapter at that position, .get() will return 0
         arrangement_tracker[n] = sum([arrangement_tracker.get(n - i, 0) for i in [1, 2, 3]])
 
+    # By the end, the biggest slot should have all the possible compatabilities
     return arrangement_tracker[max(numbers)]
 
 
