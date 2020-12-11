@@ -1,3 +1,5 @@
+import copy
+
 from aoc_utils import aoc_utils
 from tests import cases
 
@@ -6,54 +8,63 @@ class Ferry():
     def __init__(self, seating_arrangement):
         self.seats = [list(s) for s in seating_arrangement.splitlines()]
         self.optimal_arrangement = False
-        self.occupied_seats = sum([s.count('#') for s in self.seats])
+        self.height = len(self.seats[0]) - 1
+        self.width = len(self.seats) - 1
+
+    def get_occupied_seats(self):
+        return sum([s.count('#') for s in self.seats])
 
     def print_seats(self):
         [print(''.join(s)) for s in self.seats]
         print('\n')
 
-    def surrounding_count(self, ypos, xpos):
+    def get_neighbors(self, ypos, xpos):
         surrounding_seats = []
-        try:
-            surrounding_seats = [
-                self.seats[ypos - 1][xpos],
-                self.seats[ypos][xpos - 1],
-                self.seats[ypos - 1][xpos - 1],
-                self.seats[ypos + 1][xpos],
-                self.seats[ypos][xpos + 1],
-                self.seats[ypos + 1][xpos + 1],
-                self.seats[ypos + 1][xpos - 1],
-                self.seats[ypos - 1][xpos + 1]
-            ]
-        except IndexError:
-            pass
+        if 0 <= ypos <= self.height and 0 <= xpos - 1 <= self.width:
+            surrounding_seats.append(self.seats[ypos][xpos - 1])
+        if 0 <= ypos <= self.height and 0 <= xpos + 1 <= self.width:
+            surrounding_seats.append(self.seats[ypos][xpos + 1])
+        if 0 <= ypos - 1 <= self.height and 0 <= xpos <= self.width:
+            surrounding_seats.append(self.seats[ypos - 1][xpos])
+        if 0 <= ypos + 1 <= self.height and 0 <= xpos <= self.width:
+            surrounding_seats.append(self.seats[ypos + 1][xpos])
+        if 0 <= ypos - 1 <= self.height and 0 <= xpos + 1 <= self.width:
+            surrounding_seats.append(self.seats[ypos - 1][xpos + 1])
+        if 0 <= ypos - 1 <= self.height and 0 <= xpos - 1 <= self.width:
+            surrounding_seats.append(self.seats[ypos - 1][xpos - 1])
+        if 0 <= ypos + 1 <= self.height and 0 <= xpos + 1 <= self.width:
+            surrounding_seats.append(self.seats[ypos + 1][xpos + 1])
+        if 0 <= ypos + 1 <= self.height and 0 <= xpos - 1 <= self.width:
+            surrounding_seats.append(self.seats[ypos + 1][xpos - 1])
 
         return surrounding_seats
 
     def simulate_seat_choices(self):
+        seats_copy = copy.deepcopy(self.seats)
         for ypos, y in enumerate(self.seats):
             for xpos, x in enumerate(y):
-                self.optimal_arrangement = True
-                if x == 'L' and self.surrounding_count(ypos, xpos).count('#') == 0:
-                    self.seats[ypos][xpos] = '#'
-                    self.optimal_arrangement = False
+                if x == 'L' and self.get_neighbors(ypos, xpos).count('#') == 0:
+                    seats_copy[ypos][xpos] = '#'
 
-                if x == '#' and self.surrounding_count(ypos, xpos).count('L') >= 4:
-                    self.seats[ypos][xpos] = 'L'
-                    self.optimal_arrangement = False
+                if x == '#' and self.get_neighbors(ypos, xpos).count('#') >= 4:
+                    seats_copy[ypos][xpos] = 'L'
+
+        if self.seats == seats_copy:
+            self.optimal_arrangement = True
+        else:
+            self.seats = seats_copy
 
 
 def answer(problem_input, level, test=False):
     ferry = Ferry(problem_input)
-    ferry.print_seats()
+
     while True:
         ferry.simulate_seat_choices()
-        ferry.print_seats()
+        # ferry.print_seats()
         if ferry.optimal_arrangement:
             break
 
-    print(ferry.occupied_seats)
-    return ferry.occupied_seats
+    return ferry.get_occupied_seats()
 
 
 aoc_utils.run(answer, cases)
