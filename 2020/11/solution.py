@@ -8,8 +8,8 @@ class Ferry():
     def __init__(self, seating_arrangement):
         self.seats = [list(s) for s in seating_arrangement.splitlines()]
         self.optimal_arrangement = False
-        self.height = len(self.seats[0]) - 1
-        self.width = len(self.seats) - 1
+        self.height = len(self.seats) - 1
+        self.width = len(self.seats[0]) - 1
 
     def get_occupied_seats(self):
         return sum([s.count('#') for s in self.seats])
