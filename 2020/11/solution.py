@@ -11,7 +11,6 @@ class Ferry():
         self.height = len(self.seats) - 1
         self.width = len(self.seats[0]) - 1
         self.level = level
-        self.threshhold = 3 + level
 
     def get_occupied_seats(self):
         return sum([s.count('#') for s in self.seats])
@@ -20,40 +19,77 @@ class Ferry():
         [print(''.join(s)) for s in self.seats]
         print('\n')
 
-    def get_neighbors(self, ypos, xpos):
+    def left(self, ypos, xpos, steps):
+        if 0 <= ypos <= self.height and 0 <= xpos - steps <= self.width:
+            return self.seats[ypos][xpos - steps]
+
+    def right(self, ypos, xpos, steps):
+        if 0 <= ypos <= self.height and 0 <= xpos + steps <= self.width:
+            return self.seats[ypos][xpos + steps]
+
+    def up(self, ypos, xpos, steps):
+        if 0 <= ypos - steps <= self.height and 0 <= xpos <= self.width:
+            return self.seats[ypos - steps][xpos]
+
+    def down(self, ypos, xpos, steps):
+        if 0 <= ypos + steps <= self.height and 0 <= xpos <= self.width:
+            return self.seats[ypos + steps][xpos]
+
+    def upright(self, ypos, xpos, steps):
+        if 0 <= ypos - steps <= self.height and 0 <= xpos + steps <= self.width:
+            return self.seats[ypos - steps][xpos + steps]
+
+    def upleft(self, ypos, xpos, steps):
+        if 0 <= ypos - steps <= self.height and 0 <= xpos - steps <= self.width:
+            return self.seats[ypos - steps][xpos - steps]
+
+    def downright(self, ypos, xpos, steps):
+        if 0 <= ypos + steps <= self.height and 0 <= xpos + steps <= self.width:
+            return self.seats[ypos + steps][xpos + steps]
+
+    def downleft(self, ypos, xpos, steps):
+        if 0 <= ypos + steps <= self.height and 0 <= xpos - steps <= self.width:
+            return self.seats[ypos + steps][xpos - steps]
+
+    def get_adjacent(self, ypos, xpos, steps=1):
         surrounding_seats = []
-        if 0 <= ypos <= self.height and 0 <= xpos - 1 <= self.width:
-            surrounding_seats.append(self.seats[ypos][xpos - 1])
-        if 0 <= ypos <= self.height and 0 <= xpos + 1 <= self.width:
-            surrounding_seats.append(self.seats[ypos][xpos + 1])
-        if 0 <= ypos - 1 <= self.height and 0 <= xpos <= self.width:
-            surrounding_seats.append(self.seats[ypos - 1][xpos])
-        if 0 <= ypos + 1 <= self.height and 0 <= xpos <= self.width:
-            surrounding_seats.append(self.seats[ypos + 1][xpos])
-        if 0 <= ypos - 1 <= self.height and 0 <= xpos + 1 <= self.width:
-            surrounding_seats.append(self.seats[ypos - 1][xpos + 1])
-        if 0 <= ypos - 1 <= self.height and 0 <= xpos - 1 <= self.width:
-            surrounding_seats.append(self.seats[ypos - 1][xpos - 1])
-        if 0 <= ypos + 1 <= self.height and 0 <= xpos + 1 <= self.width:
-            surrounding_seats.append(self.seats[ypos + 1][xpos + 1])
-        if 0 <= ypos + 1 <= self.height and 0 <= xpos - 1 <= self.width:
-            surrounding_seats.append(self.seats[ypos + 1][xpos - 1])
+        for f in [self.up, self.down, self.left, self.right, self.upleft, self.upright, self.downleft, self.downright]:
+            seat = f(ypos, xpos, steps)
+            if seat:
+                surrounding_seats.append(seat)
 
         return surrounding_seats
 
     def get_visible(self, ypos, xpos):
-        return []
+        seats = []
+        for f in [self.up, self.down, self.left, self.right, self.upleft, self.upright, self.downleft, self.downright]:
+            steps = 1
+            while True:
+                seat = f(ypos, xpos, steps)
+                if seat is None:
+                    break
+                if seat != '.':
+                    seats.append(seat)
+                    break
+                steps += 1
+        return seats
 
     def simulate_seat_choices(self):
         seats_copy = copy.deepcopy(self.seats)
         for ypos, y in enumerate(self.seats):
             for xpos, x in enumerate(y):
-                surrounding_seats = self.get_neighbors(ypos, xpos) if self.level == 1 else self.get_visible(ypos, xpos)
-                if x == 'L' and surrounding_seats.count('#') == 0:
-                    seats_copy[ypos][xpos] = '#'
+                if self.level == 1:
+                    if x == 'L' and self.get_adjacent(ypos, xpos).count('#') == 0:
+                        seats_copy[ypos][xpos] = '#'
 
-                if x == '#' and surrounding_seats.count('#') >= self.threshhold:
-                    seats_copy[ypos][xpos] = 'L'
+                    if x == '#' and self.get_adjacent(ypos, xpos).count('#') >= 4:
+                        seats_copy[ypos][xpos] = 'L'
+                else:
+                    if x == 'L' and self.get_visible(ypos, xpos).count('#') == 0:
+                        seats_copy[ypos][xpos] = '#'
+
+                    if x == '#' and self.get_visible(ypos, xpos).count('#') >= 5:
+                        seats_copy[ypos][xpos] = 'L'
 
         if self.seats == seats_copy:
             self.optimal_arrangement = True
@@ -64,11 +100,9 @@ class Ferry():
 def answer(problem_input, level, test=False):
     ferry = Ferry(problem_input, level)
 
-    while True:
+    while not ferry.optimal_arrangement:
         ferry.simulate_seat_choices()
         # ferry.print_seats()
-        if ferry.optimal_arrangement:
-            break
 
     return ferry.get_occupied_seats()
 
