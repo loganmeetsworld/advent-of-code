@@ -5,8 +5,10 @@ from tests import cases
 
 
 class Ferry():
-    def __init__(self):
+    def __init__(self, level):
+        self.level = level
         self.position = [0, 0]
+        self.waypoint = [-1, 10]
         self.directions = ['E', 'S', 'W', 'N']
 
     def get_distance_traveled(self):
@@ -14,23 +16,55 @@ class Ferry():
 
     def navigate(self, action, amount):
         if action == 'F':
-            action = self.directions[0]
+            if self.level == 1:
+                action = self.directions[0]
+            else:
+                self.position[0] += (self.waypoint[0] * amount)
+                self.position[1] += (self.waypoint[1] * amount)
         if action == 'N':
-            self.position[0] -= amount
+            if self.level == 1:
+                self.position[0] -= amount
+            else:
+                self.waypoint[0] -= amount
         if action == 'S':
-            self.position[0] += amount
+            if self.level == 1:
+                self.position[0] += amount
+            else:
+                self.waypoint[0] += amount
         if action == 'E':
-            self.position[1] += amount
+            if self.level == 1:
+                self.position[1] += amount
+            else:
+                self.waypoint[1] += amount
         if action == 'W':
-            self.position[1] -= amount
+            if self.level == 1:
+                self.position[1] -= amount
+            else:
+                self.waypoint[1] -= amount
         if action == 'R':
-            self.directions = self.directions[int(amount / 90):] + self.directions[:int(amount / 90)]
+            if self.level == 1:
+                self.directions = self.directions[int(amount / 90):] + self.directions[:int(amount / 90)]
+            else:
+                if amount == 90:
+                    self.waypoint = [self.waypoint[1], -self.waypoint[0]]
+                elif amount == 270:
+                    self.waypoint = [-self.waypoint[1], self.waypoint[0]]
+                elif amount == 180:
+                    self.waypoint = [-self.waypoint[0], -self.waypoint[1]]
         if action == 'L':
-            self.directions = self.directions[-int(amount / 90):] + self.directions[:-int(amount / 90)]
+            if self.level == 1:
+                self.directions = self.directions[-int(amount / 90):] + self.directions[:-int(amount / 90)]
+            else:
+                if amount == 90:
+                    self.waypoint = [-self.waypoint[1], self.waypoint[0]]
+                elif amount == 270:
+                    self.waypoint = [self.waypoint[1], -self.waypoint[0]]
+                elif amount == 180:
+                    self.waypoint = [-self.waypoint[0], -self.waypoint[1]]
 
 
 def answer(problem_input, level, test=False):
-    ferry = Ferry()
+    ferry = Ferry(level)
     for move in problem_input.splitlines():
         match = re.match(r'([NSEWLRF])(\d+)', move)
         action, amount = match[1], int(match[2])
