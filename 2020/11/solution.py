@@ -5,11 +5,13 @@ from tests import cases
 
 
 class Ferry():
-    def __init__(self, seating_arrangement):
+    def __init__(self, seating_arrangement, level):
         self.seats = [list(s) for s in seating_arrangement.splitlines()]
         self.optimal_arrangement = False
         self.height = len(self.seats) - 1
         self.width = len(self.seats[0]) - 1
+        self.level = level
+        self.threshhold = 3 + level
 
     def get_occupied_seats(self):
         return sum([s.count('#') for s in self.seats])
@@ -39,14 +41,18 @@ class Ferry():
 
         return surrounding_seats
 
+    def get_visible(self, ypos, xpos):
+        return []
+
     def simulate_seat_choices(self):
         seats_copy = copy.deepcopy(self.seats)
         for ypos, y in enumerate(self.seats):
             for xpos, x in enumerate(y):
-                if x == 'L' and self.get_neighbors(ypos, xpos).count('#') == 0:
+                surrounding_seats = self.get_neighbors(ypos, xpos) if self.level == 1 else self.get_visible(ypos, xpos)
+                if x == 'L' and surrounding_seats.count('#') == 0:
                     seats_copy[ypos][xpos] = '#'
 
-                if x == '#' and self.get_neighbors(ypos, xpos).count('#') >= 4:
+                if x == '#' and surrounding_seats.count('#') >= self.threshhold:
                     seats_copy[ypos][xpos] = 'L'
 
         if self.seats == seats_copy:
@@ -56,7 +62,7 @@ class Ferry():
 
 
 def answer(problem_input, level, test=False):
-    ferry = Ferry(problem_input)
+    ferry = Ferry(problem_input, level)
 
     while True:
         ferry.simulate_seat_choices()
