@@ -30,6 +30,7 @@ def run_version_2(mask, value):
 
     for n in range(2**mask.count('X')):
         n = bin(n)[2:].zfill(mask.count('X'))
+        # Kind of a cool trick to take a bunch of empty {} and append string to them
         result.append(holder.format(*n))
 
     return [int(x, 2) for x in result]
