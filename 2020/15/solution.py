@@ -3,25 +3,19 @@ from tests import cases
 
 
 def answer(problem_input, level, test=False):
+    last_turn = 2020 if level == 1 else 30000000
     numbers = [int(i) for i in problem_input.split(',')]
     tracker = {}
     for i, n in enumerate(numbers):
         tracker[n] = i + 1
 
-    for turn in range(4, 2021):
-        # print(f'turn: {turn}')
-        play = numbers[-1]
-        # print(f'play: {play}')
-        # print(f'tracker before: {tracker}')
-        # print(f'numbers before: {numbers}')
-        if tracker.get(play):
-            numbers.append(turn - 1 - tracker[play])
+    for turn in range(len(numbers), last_turn):
+        current_play = numbers[-1]
+        if tracker.get(current_play):
+            numbers.append(turn - tracker[current_play])
         else:
             numbers.append(0)
-        # print(f'changing tracker at {play}, to {turn - 1}')
-        tracker[play] = turn - 1
-        # print(f'tracker after: {tracker}')
-        # print(f'numbers: {numbers}')
+        tracker[current_play] = turn
 
     return numbers[-1]
 
