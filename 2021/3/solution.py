@@ -2,17 +2,30 @@ from aoc_utils import aoc_utils
 from tests import cases
 
 
-def answer(problem_input, level, test=False):
-    gamma_rate, epsilon_rate = '', ''
-    binaries = [i for i in problem_input.splitlines()]
+def track_rates(binaries):
+    tracker = ''
 
-    for b in zip(*binaries):
-        if sum([int(i) for i in b]) > (len(binaries) / 2):
-            gamma_rate += '1'; epsilon_rate += '0'
+    for vertical_slice in zip(*binaries):
+        if sum([int(i) for i in vertical_slice]) >= (len(binaries) / 2):
+            tracker += '1'
         else:
-            gamma_rate += '0'; epsilon_rate += '1'
+            tracker += '0'
 
-    return int(gamma_rate, 2) * int(epsilon_rate, 2)
+    return tracker
+
+
+def life_support_rate(tracker, binaries):
+    print("BALH")
+
+
+def answer(problem_input, level, test=False):
+    binaries = [l for l in problem_input.splitlines()]
+    tracker = track_rates(binaries)
+    inverse_tracker = ''.join('1' if x == '0' else '0' for x in tracker)
+    if level == 1:
+        return int(tracker, 2) * int(inverse_tracker, 2)
+    elif level == 2:
+        return life_support_rate(tracker, binaries)
 
 
 aoc_utils.run(answer, cases)
