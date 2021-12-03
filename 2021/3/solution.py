@@ -6,7 +6,7 @@ def part_1(binaries):
     rate = ''
 
     for vertical_bits in zip(*binaries):
-        if sum([int(bit) for bit in vertical_bits]) >= (len(binaries) / 2):
+        if sum([int(bit) for bit in vertical_bits]) >= len(binaries) / 2:
             rate += '1'
         else:
             rate += '0'
@@ -14,7 +14,7 @@ def part_1(binaries):
     return int(rate, 2) * int(''.join('1' if x == '0' else '0' for x in rate), 2)
 
 
-def calc_part_2_rates(binaries, dominant, non_dominant):
+def part_2(binaries, dominant, non_dominant):
     for idx in range(len(binaries[0])):
         ones_count = sum([int(i) for i in list(zip(*binaries))[idx]])
         
@@ -33,7 +33,7 @@ def answer(problem_input, level, test=False):
     if level == 1:
         return part_1(binaries)
     elif level == 2:
-        return calc_part_2_rates(binaries, '1', '0') * calc_part_2_rates(binaries, '0', '1')
+        return part_2(binaries, '1', '0') * part_2(binaries, '0', '1')
 
 
 aoc_utils.run(answer, cases)
