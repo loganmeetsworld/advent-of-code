@@ -15,7 +15,13 @@ def track_rates(binaries):
 
 
 def life_support_rate(tracker, binaries):
-    print("BALH")
+    print(tracker)
+    for idx, place in enumerate(tracker):
+        for binary in binaries:
+            if binary[idx] != place:
+                binaries.remove(binary)
+
+    print(binaries)
 
 
 def answer(problem_input, level, test=False):
