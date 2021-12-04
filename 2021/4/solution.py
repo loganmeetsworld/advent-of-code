@@ -8,7 +8,6 @@ class Board():
     def __init__(self, layout):
         self.tiles = [int(i) for i in re.findall(r'(\d+)', layout)]
         self.bingo = False
-        self.winning_score = 0
 
     def partition(self):
         return [self.tiles[i:i + 5] for i in range(0, len(self.tiles), 5)]
@@ -22,16 +21,17 @@ class Board():
         board = self.partition()
         self.bingo = self.check_bingo(board) or self.check_bingo(zip(*board))
 
-    def check_bingo(self, collection):
+    @staticmethod
+    def check_bingo(collection):
         for item in collection:
+            # Get a set of items in the row or column, if it's length is one, they are all 'X'
             if len(set(item)) <= 1: return True
         return False
 
 
 def answer(problem_input, level, test=False):
     parsed_input = problem_input.split("\n\n")
-    numbers = [int(i) for i in parsed_input[0].split(',')]
-    boards = [Board(b) for b in parsed_input[1:]]
+    numbers, boards = [int(i) for i in parsed_input[0].split(',')], [Board(b) for b in parsed_input[1:]]
     for number in numbers:
         for board in boards:
             if board.bingo: continue
