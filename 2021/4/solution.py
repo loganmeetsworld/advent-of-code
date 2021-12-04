@@ -6,14 +6,11 @@ from tests import cases
 
 class Board():
     def __init__(self, layout):
-        self.tiles = self.parse_board(layout)
-        self.winner = False
+        self.tiles = [int(i) for i in re.findall(r'(\d+)', layout)]
+        self.bingo = False
         self.winning_score = 0
 
-    def parse_board(self, layout):
-        return [int(i) for i in re.findall(r'(\d+)', layout)]
-
-    def organize_board(self):
+    def partition(self):
         return [self.tiles[i:i + 5] for i in range(0, len(self.tiles), 5)]
 
     def play(self, number):
@@ -21,42 +18,28 @@ class Board():
             self.tiles[self.tiles.index(number)] = 'X'
             self.check_for_win()    
 
-    def row_win(self):
-        board = self.organize_board()
-        for row in board:
-            if len(set(row)) <= 1:
-                return True
-        return False
-
-    def col_win(self):
-        board = self.organize_board()
-        columns = zip(*board)
-        for column in columns:
-            if len(set(column)) <= 1:
-                return True
-        return False
-
     def check_for_win(self):
-        if self.row_win() or self.col_win():
-            self.winner = True
+        board = self.partition()
+        self.bingo = self.check_bingo(board) or self.check_bingo(zip(*board))
 
-    def score_board(self):
-        self.winning_score = sum(filter(lambda n: n != 'X', self.tiles))
+    def check_bingo(self, collection):
+        for item in collection:
+            if len(set(item)) <= 1: return True
+        return False
 
 
 def answer(problem_input, level, test=False):
     parsed_input = problem_input.split("\n\n")
-    plays = [int(i) for i in parsed_input[0].split(',')]
+    numbers = [int(i) for i in parsed_input[0].split(',')]
     boards = [Board(b) for b in parsed_input[1:]]
-    for number in plays:
+    for number in numbers:
         for board in boards:
-            if board.winner:
-                continue
+            if board.bingo: continue
             board.play(number)
-            if board.winner:
-                if level == 1 or len(set([b.winner for b in boards])) == 1:
-                    board.score_board()
-                    return board.winning_score * number
+            if board.bingo:
+                # If level 1 or everyone has reached bingo, return the score
+                if level == 1 or len(set([b.bingo for b in boards])) == 1:
+                    return sum(filter(lambda n: n != 'X', board.tiles)) * number
 
 
 aoc_utils.run(answer, cases)
