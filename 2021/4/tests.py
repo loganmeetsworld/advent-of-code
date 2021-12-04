@@ -20,4 +20,5 @@ TEST_INPUT = """7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,
 
 cases = [
     {'level': 1, 'input': TEST_INPUT, 'output': 4512},
+    {'level': 2, 'input': TEST_INPUT, 'output': 1924},
 ]

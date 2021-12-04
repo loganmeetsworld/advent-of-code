@@ -50,10 +50,13 @@ def answer(problem_input, level, test=False):
     boards = [Board(b) for b in parsed_input[1:]]
     for number in plays:
         for board in boards:
+            if board.winner:
+                continue
             board.play(number)
             if board.winner:
-                board.score_board()
-                return board.winning_score * number
+                if level == 1 or len(set([b.winner for b in boards])) == 1:
+                    board.score_board()
+                    return board.winning_score * number
 
 
 aoc_utils.run(answer, cases)
