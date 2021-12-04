@@ -10,18 +10,38 @@ class Board():
         self.winner = False
         self.winning_score = 0
 
-    def parse_board(board):
-        numbers = re.findall(r'(\d+)', board)
+    def parse_board(self, board):
+        return [int(i) for i in re.findall(r'(\d+)', board)]
+
+    def organize_board(self, numbers):
         return [numbers[i:i + 5] for i in range(0, len(numbers), 5)]
 
-    def play(number):
-        # X out number
-        print(number)
-        # Check for win, set winner to True if winner
+    def play(self, number):
+        if number in self.tiles:
+            self.tiles[self.tiles.index(number)] = 'X'
+            self.check_for_win()    
+
+    def row_win(self):
+        board = self.organize_board(self.tiles)
+        for row in board:
+            if len(set(row)) <= 1:
+                return True
+        return False
+
+    def col_win(self):
+        board = self.organize_board(self.tiles)
+        columns = zip(*board)
+        for column in columns:
+            if len(set(column)) <= 1:
+                return True
+        return False
+
+    def check_for_win(self):
+        if self.row_win() or self.col_win():
+            self.winner = True
 
     def score_board(self):
-        self.winning_score = 0
-        # set winning score to all unused tiles
+        self.winning_score = sum(filter(lambda n: n != 'X', self.tiles))
 
 
 def answer(problem_input, level, test=False):
@@ -32,7 +52,8 @@ def answer(problem_input, level, test=False):
         for board in boards:
             board.play(number)
             if board.winner:
-                return board.winning_score
+                board.score_board()
+                return board.winning_score * number
 
 
 aoc_utils.run(answer, cases)
