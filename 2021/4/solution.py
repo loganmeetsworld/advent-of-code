@@ -10,11 +10,11 @@ class Board():
         self.winner = False
         self.winning_score = 0
 
-    def parse_board(self, board):
-        return [int(i) for i in re.findall(r'(\d+)', board)]
+    def parse_board(self, layout):
+        return [int(i) for i in re.findall(r'(\d+)', layout)]
 
-    def organize_board(self, numbers):
-        return [numbers[i:i + 5] for i in range(0, len(numbers), 5)]
+    def organize_board(self):
+        return [self.tiles[i:i + 5] for i in range(0, len(self.tiles), 5)]
 
     def play(self, number):
         if number in self.tiles:
@@ -22,14 +22,14 @@ class Board():
             self.check_for_win()    
 
     def row_win(self):
-        board = self.organize_board(self.tiles)
+        board = self.organize_board()
         for row in board:
             if len(set(row)) <= 1:
                 return True
         return False
 
     def col_win(self):
-        board = self.organize_board(self.tiles)
+        board = self.organize_board()
         columns = zip(*board)
         for column in columns:
             if len(set(column)) <= 1:
@@ -46,7 +46,7 @@ class Board():
 
 def answer(problem_input, level, test=False):
     parsed_input = problem_input.split("\n\n")
-    plays = parsed_input[0].split(',')
+    plays = [int(i) for i in parsed_input[0].split(',')]
     boards = [Board(b) for b in parsed_input[1:]]
     for number in plays:
         for board in boards:
