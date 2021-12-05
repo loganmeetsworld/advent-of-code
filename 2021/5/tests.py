@@ -11,4 +11,5 @@ TEST_INPUT = """0,9 -> 5,9
 
 cases = [
     {'level': 1, 'input': TEST_INPUT, 'output': 5},
+    {'level': 2, 'input': TEST_INPUT, 'output': 12},
 ]
