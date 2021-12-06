@@ -1,35 +1,40 @@
+from collections import defaultdict
+
 from aoc_utils import aoc_utils
 from tests import cases
 
 
-class Lanternfish():
-    def __init__(self, birth_cycle):
-        self.birth_cycle = birth_cycle
-    def grow(self):
-        self.birth_cycle -= 1
-    def birth(self):
-        self.birth_cycle = 7
-    def pregnant(self):
-        return self.birth_cycle == 0
-
-
 def answer(problem_input, level, test=False):
-    if level == 1:
-        days = 80
-    elif level == 2:
-        days = 256
-    
-    fishies = [Lanternfish(int(i)) for i in problem_input.split(',')]
+    days = 80 if level == 1 else 256
 
+    # Create a new dictionary to act as a tracker with a default value of 0 (no fishies at that reproduction stage)
+    # This tracker will have days until reproduction as keys, and number of fishies with that reproduction stage as values
+    tracker = defaultdict(lambda: 0)
+
+    # Add our input, which is a list of days until each fish will reproduce
+    for days_until_reproduction in problem_input.split(','):
+        tracker[days_until_reproduction] += 1
+
+    reset_stage = '6'
+    new_life_stage = '8'
+    reproducing_stage = '0'
     while days > 0:
-        for fish in fishies:
-            if fish.pregnant():
-                fishies.append(Lanternfish(9))
-                fish.birth()
-            fish.grow()
+        new_day_tracker = {}
+        # In each new day up to day 7 we move fishies up one to a new reproduction stage (those at day 8 will move back to 0)
+        for i in range(8):
+            new_day_tracker[str(i)] = tracker[str(i + 1)]
+        
+        # The number of fishies reproducing that day get added, and parent fishies reset
+        new_day_tracker[reset_stage] += tracker[reproducing_stage]
+        # Baby fishies start life at the beginning stage of reproduction, so any babies get moved to the start
+        new_day_tracker[new_life_stage] = tracker[reproducing_stage]
+
+        # Set the tracker to our new day and move forward a day
+        tracker = new_day_tracker
         days -= 1
-    
-    return len(fishies)
+
+    # Add up all the fishies at various reproduction stages
+    return sum(tracker.values())
 
 
 aoc_utils.run(answer, cases)
