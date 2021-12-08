@@ -11,7 +11,7 @@ egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
 gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce"""
 
 cases = [
-    # {'level': 1, 'input': TEST_INPUT, 'output': 26},
+    {'level': 1, 'input': TEST_INPUT_2, 'output': 26},
     {'level': 2, 'input': TEST_INPUT_1, 'output': 5353},
     {'level': 2, 'input': TEST_INPUT_2, 'output': 61229},
 ]

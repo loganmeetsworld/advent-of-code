@@ -37,12 +37,17 @@ def decode(digits, output):
         ''.join(sorted(eight)): '8',
         ''.join(sorted(nine)): '9'
     }
-    print(guide)
     return int(''.join([guide[''.join(sorted(n))] for n in output.split()]))
 
 
 def answer(problem_input, level, test=False):
-    return sum([decode(*line.split(' | ')) for line in problem_input.splitlines()])
+    if level == 1:
+        outputs, acceptible_lengths = [], [2, 3, 4, 7]
+        for line in problem_input.splitlines():
+            outputs += line.split(' | ')[1].split()
+        return sum(1 for i in outputs if len(i) in acceptible_lengths)
+    else:
+        return sum([decode(*line.split(' | ')) for line in problem_input.splitlines()])
 
 
 aoc_utils.run(answer, cases)
