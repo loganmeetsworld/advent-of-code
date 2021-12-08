@@ -11,4 +11,5 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 
 cases = [
     {'level': 1, 'input': TEST_INPUT, 'output': 26},
+    {'level': 2, 'input': TEST_INPUT, 'output': 61229},
 ]
