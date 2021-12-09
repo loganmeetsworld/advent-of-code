@@ -6,4 +6,5 @@ TEST_INPUT = """2199943210
 
 cases = [
     {'level': 1, 'input': TEST_INPUT, 'output': 15},
+    {'level': 2, 'input': TEST_INPUT, 'output': 1134},
 ]
