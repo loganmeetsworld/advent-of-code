@@ -5,8 +5,8 @@ from tests import cases
 class HeightMap():
     def __init__(self, hmap):
         self.hmap = hmap
-        self.height = len(hmap)
-        self.width = len(hmap[0])
+        self.height = len(hmap) - 1
+        self.width = len(hmap[0]) - 1
         self.current_pos = [0, 0]
         self.total_risk_level = 0
 
@@ -15,23 +15,24 @@ class HeightMap():
             for x in range(self.width):
                 current_risk = self.hmap[y][x]
                 if current_risk < min(self.check_surrounding(y, x)):
+                    print(current_risk)
                     self.total_risk_level += (current_risk + 1)
 
     def left(self, ypos, xpos):
-        if 0 <= ypos - 1 <= self.height and 0 <= xpos <= self.width:
-            return self.hmap[ypos - 1][xpos]
-
-    def right(self, ypos, xpos):
-        if 0 <= ypos + 1 <= self.height and 0 <= xpos <= self.width:
-            return self.hmap[ypos + 1][xpos]
-
-    def up(self, ypos, xpos, ):
         if 0 <= ypos <= self.height and 0 <= xpos - 1 <= self.width:
             return self.hmap[ypos][xpos - 1]
 
-    def down(self, ypos, xpos):
+    def right(self, ypos, xpos):
         if 0 <= ypos <= self.height and 0 <= xpos + 1 <= self.width:
             return self.hmap[ypos][xpos + 1]
+
+    def up(self, ypos, xpos):
+        if 0 <= ypos - 1 <= self.height and 0 <= xpos <= self.width:
+            return self.hmap[ypos - 1][xpos]
+
+    def down(self, ypos, xpos):
+        if 0 <= ypos + 1 <= self.height and 0 <= xpos <= self.width:
+            return self.hmap[ypos + 1][xpos]
 
     def check_surrounding(self, y, x):
         surrounding = []
@@ -39,7 +40,6 @@ class HeightMap():
             risk = f(y, x)
             if risk: surrounding.append(risk)
        
-        print(surrounding)
         return surrounding
 
 def answer(problem_input, level, test=False):
