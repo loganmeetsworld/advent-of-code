@@ -1,3 +1,9 @@
+TEST_INPUT = """2199943210
+3987894921
+9856789892
+8767896789
+9899965678"""
+
 cases = [
-    {'level': 1, 'input': None, 'output': None},
+    {'level': 1, 'input': TEST_INPUT, 'output': 15},
 ]
