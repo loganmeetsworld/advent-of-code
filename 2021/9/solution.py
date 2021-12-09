@@ -7,16 +7,14 @@ class HeightMap():
         self.hmap = hmap
         self.height = len(hmap) - 1
         self.width = len(hmap[0]) - 1
-        self.current_pos = [0, 0]
         self.total_risk_level = 0
 
     def scan(self):
-        for y in range(self.height):
-            for x in range(self.width):
-                current_risk = self.hmap[y][x]
-                if current_risk < min(self.check_surrounding(y, x)):
-                    print(current_risk)
-                    self.total_risk_level += (current_risk + 1)
+        for ypos, y in enumerate(self.hmap):
+            for xpos, x in enumerate(y):
+                adjacent = self.check_surrounding(ypos, xpos)
+                if x < min(adjacent):
+                    self.total_risk_level += (x + 1)
 
     def left(self, ypos, xpos):
         if 0 <= ypos <= self.height and 0 <= xpos - 1 <= self.width:
@@ -28,17 +26,18 @@ class HeightMap():
 
     def up(self, ypos, xpos):
         if 0 <= ypos - 1 <= self.height and 0 <= xpos <= self.width:
+            if [ypos, xpos] == [1, 9]:
             return self.hmap[ypos - 1][xpos]
 
     def down(self, ypos, xpos):
         if 0 <= ypos + 1 <= self.height and 0 <= xpos <= self.width:
             return self.hmap[ypos + 1][xpos]
 
-    def check_surrounding(self, y, x):
+    def check_surrounding(self, ypos, xpos):
         surrounding = []
         for f in [self.up, self.down, self.left, self.right]:
-            risk = f(y, x)
-            if risk: surrounding.append(risk)
+            risk = f(ypos, xpos)
+            if risk or risk == 0: surrounding.append(risk)
        
         return surrounding
 
