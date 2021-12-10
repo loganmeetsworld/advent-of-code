@@ -12,4 +12,5 @@ TEST_INPUT = """[({(<(())[]>[[{[]{<()<>>
 
 cases = [
     {'level': 1, 'input': TEST_INPUT, 'output': 26397},
+    {'level': 2, 'input': TEST_INPUT, 'output': 288957},
 ]
