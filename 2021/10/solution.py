@@ -1,53 +1,47 @@
 import re
-import statistics
+from statistics import median
 
 from aoc_utils import aoc_utils
 from tests import cases
 
 BRACKET_REGEX = '\(\)|\{\}|\[\]|\<\>'
 END_BRACKET_REGEX = '\)|\>|\}|\]'
-SYNTAX_CHECKER_POINTS = {
-    ')': 3,
-    ']': 57,
-    '}': 1197,
-    '>': 25137
+POINTS = {
+    ')': [3, 1],
+    ']': [57, 2],
+    '}': [1197, 3],
+    '>': [25137, 4]
 }
-AUTOCOMPLETE_POINTS = {
-    ')': 1,
-    ']': 2,
-    '}': 3,
-    '>': 4
-}
+
+def score_incomplete(chunk):
+    autocomplete_score = 0
+    tr = str.maketrans('(){}<>[]', ')(}{><][')
+    reversed_chunk = chunk[::-1].translate(tr)
+    for char in list(reversed_chunk):
+        autocomplete_score = (autocomplete_score * 5) + POINTS[char][1]
+    
+    return autocomplete_score
 
 
 def answer(problem_input, level, test=False):
-    syntax_score = 0
-    autocomplete_scores = []
+    syntax_scores, autocomplete_scores = [], []
+
     for chunk in problem_input.splitlines():
         while True:
             prev_len = len(chunk)
             chunk = re.sub(BRACKET_REGEX, '', chunk)
-            if prev_len == len(chunk):
-                break
+            if prev_len == len(chunk): break
 
-        r = re.search('\)|\>|\}|\]', chunk)
-        if r: 
-            syntax_score += SYNTAX_CHECKER_POINTS[r.group(0)]
+        corrupted = re.search(END_BRACKET_REGEX, chunk)
+        if corrupted: 
+            syntax_scores.append(POINTS[corrupted.group(0)][0])
         else:
-            print(chunk)
-            score = 0
-            tr = str.maketrans('(){}<>[]', ')(}{><][')
-            reversed_chunk = chunk[::-1].translate(tr)
-            print(reversed_chunk)
-            for s in list(reversed_chunk):
-                score = score * 5
-                score += AUTOCOMPLETE_POINTS[s]
-            autocomplete_scores.append(score)
+            autocomplete_scores.append(score_incomplete(chunk))
 
     if level == 1:
-        return syntax_score
+        return sum(syntax_scores)
     else:
-        return statistics.median(autocomplete_scores)
+        return median(autocomplete_scores)
 
 
 aoc_utils.run(answer, cases)
