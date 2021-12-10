@@ -1,3 +1,5 @@
+from math import prod
+
 from aoc_utils import aoc_utils
 from tests import cases
 
@@ -8,10 +10,31 @@ class HeightMap():
         self.height = len(hmap) - 1
         self.width = len(hmap[0]) - 1
         self.total_risk_level = 0
+        self.basin_areas = []
 
-    def scan(self):
+    def scan_for_basins(self):
         for ypos, y in enumerate(self.hmap):
             for xpos, x in enumerate(y):
+                if x == 9: continue
+                adjacent = self.check_surrounding(ypos, xpos)
+                if x < min(adjacent):
+                    basin = [[ypos,xpos]]
+                    for r, c in basin:
+                        if r - 1 >= 0 and self.hmap[r - 1][c] != 9 and [r - 1,c] not in basin:
+                            basin.append([r - 1,c])
+                        if r + 1 < len(self.hmap) and self.hmap[r + 1][c] != 9 and [r + 1,c] not in basin:
+                            basin.append([r + 1,c])
+                        if c - 1 >= 0 and self.hmap[r][c - 1] != 9 and [r, c - 1] not in basin:
+                            basin.append([r, c - 1])
+                        if c + 1 < len(self.hmap[0]) and self.hmap[r][c + 1] != 9 and [r, c + 1] not in basin:
+                            basin.append([r, c + 1])
+            
+                    self.basin_areas.append(len(basin))
+
+    def scan_for_lowest_levels(self):
+        for ypos, y in enumerate(self.hmap):
+            for xpos, x in enumerate(y):
+                if x == 9: continue
                 adjacent = self.check_surrounding(ypos, xpos)
                 if x < min(adjacent):
                     self.total_risk_level += (x + 1)
@@ -26,7 +49,6 @@ class HeightMap():
 
     def up(self, ypos, xpos):
         if 0 <= ypos - 1 <= self.height and 0 <= xpos <= self.width:
-            if [ypos, xpos] == [1, 9]:
             return self.hmap[ypos - 1][xpos]
 
     def down(self, ypos, xpos):
@@ -43,8 +65,11 @@ class HeightMap():
 
 def answer(problem_input, level, test=False):
     height_map = HeightMap([[int(i) for i in list(line)] for line in problem_input.splitlines()])
-    height_map.scan()
-    return height_map.total_risk_level
-
+    if level == 1:
+        height_map.scan_for_lowest_levels()
+        return height_map.total_risk_level
+    if level == 2:
+        height_map.scan_for_basins()
+        return prod(sorted(height_map.basin_areas)[-3:])
 
 aoc_utils.run(answer, cases)
