@@ -40,7 +40,7 @@ class OctopusEnergyMap():
     def print_map(self):
         [print("".join(['\033[1m' + str(i) + '\033[0m' if i == 0 else str(i) for i in line])) for line in self.map]
         print()
-        
+
     @staticmethod 
     def get_neighbors(ypos, xpos):
         return [            
@@ -61,11 +61,12 @@ def answer(problem_input, level, test=False):
     if level == 1:
         for _ in range(steps):
             octopuses.step()
-            octopuses.print_map()
+            # octopuses.print_map()
         return octopuses.flashes
     elif level == 2:
         while True:
             octopuses.step()
+            # octopuses.print_map()
             if octopuses.count_lights() == 100: return octopuses.step_count
 
 
