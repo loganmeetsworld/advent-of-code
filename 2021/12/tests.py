@@ -40,5 +40,6 @@ cases = [
     {'level': 1, 'input': TEST_INPUT_1, 'output': 10},
     {'level': 1, 'input': TEST_INPUT_2, 'output': 19},
     {'level': 1, 'input': TEST_INPUT_3, 'output': 226},
-    {'level': 2, 'input': TEST_INPUT_1, 'output': 0},
+    {'level': 2, 'input': TEST_INPUT_2, 'output': 103},
+    {'level': 2, 'input': TEST_INPUT_3, 'output': 3509},
 ]
