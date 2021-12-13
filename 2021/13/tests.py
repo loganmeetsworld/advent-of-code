@@ -22,4 +22,5 @@ fold along x=5"""
 
 cases = [
     {'level': 1, 'input': TEST_INPUT_1, 'output': 17},
+    {'level': 2, 'input': TEST_INPUT_1, 'output': 16},
 ]

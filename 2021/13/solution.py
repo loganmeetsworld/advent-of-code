@@ -9,7 +9,9 @@ class Paper():
         self.dots = dots
         self.folds = folds
 
-    def fold(self, times):
+    def fold(self, times=False):
+        if not times:
+            times = len(self.folds)
         for direction, length in self.folds[0:times]:
             if direction == 'y':
                 new_dots = []
@@ -66,6 +68,9 @@ def answer(problem_input, level, test=False):
     if level == 1:
         paper.print_dots()
         paper.fold(1)
+        paper.print_dots()
+    elif level == 2:
+        paper.fold()
         paper.print_dots()
     return paper.get_visible()
 
