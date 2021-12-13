@@ -7,7 +7,6 @@ from tests import cases
 def search(graph, node):
     # do something
     return 0
-        
 
 def answer(problem_input, level, test=False):
     graph = defaultdict(list)
