@@ -19,4 +19,5 @@ CN -> C"""
 
 cases = [
     {'level': 1, 'input': TEST_INPUT_1, 'output': 1588},
+    {'level': 2, 'input': TEST_INPUT_1, 'output': 2188189693529},
 ]
