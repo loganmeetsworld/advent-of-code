@@ -1,38 +1,36 @@
+import networkx as nx
+
 from aoc_utils import aoc_utils
 from tests import cases
 
 
+def create_graph(cavern_risks, height, width):
+    graph = nx.grid_2d_graph(height, width, create_using=nx.DiGraph)
+    for x in range(width):
+        for y in range(height):
+            neighbors = [
+                (x - 1, y),
+                (x + 1, y),
+                (x, y - 1),
+                (x, y + 1)
+            ]
+            for neighbour in neighbors:
+                if 0 <= x <= width and 0 <= y <= height:
+                    graph.add_edge(neighbour, (x, y), weight=cavern_risks[x][y])
+    return graph
+
+
 def answer(problem_input, level, test=False):
     cavern_risks = [[int(i) for i in list(line)] for line in problem_input.splitlines()]
-    tracker = []
     height, width = len(cavern_risks), len(cavern_risks[0])
-
-    for ypos in range(height):
-        tracker.append([])
-        for xpos in range(width):
-            if ypos == 0 and xpos == 0:
-                current_risk = 0
-            else:
-                current_risk = cavern_risks[ypos][xpos]
-            
-            risks = [current_risk]
-            neighbors = []
-
-            if ypos + 1 < height and ypos + 1 < len(tracker):
-                neighbors.append(tracker[ypos + 1][xpos])
-            if ypos - 1 >= 0:
-                neighbors.append(tracker[ypos - 1][xpos])
-            if xpos + 1 < width and xpos + 1 < len(tracker[ypos]):
-                neighbors.append(tracker[ypos][xpos + 1])
-            if xpos - 1 >= 0:
-                neighbors.append(tracker[ypos][xpos - 1])
-
-            if neighbors:
-                risks.append(min(neighbors))
-
-            tracker[ypos].append(sum(risks))
-
-    return tracker[-1][-1]
+    graph = create_graph(cavern_risks, height, width)
+    return nx.shortest_path_length(
+        graph,
+        source=(0, 0),
+        target=(height - 1, width - 1),
+        weight='weight',
+        method='dijkstra'
+    )
 
 
 aoc_utils.run(answer, cases)
