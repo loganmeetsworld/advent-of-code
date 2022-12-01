@@ -1,3 +1,4 @@
 cases = [
-    {'level': 1, 'input': None, 'output': None},
+    {'level': 1, 'input': "1000\n2000\n3000\n\n4000\n\n5000\n6000\n\n7000\n8000\n9000\n\n10000", 'output': 24000},
+    {'level': 2, 'input': "1000\n2000\n3000\n\n4000\n\n5000\n6000\n\n7000\n8000\n9000\n\n10000", 'output': 45000},
 ]
