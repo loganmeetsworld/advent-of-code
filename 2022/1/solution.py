@@ -3,14 +3,11 @@ from tests import cases
 
 
 def answer(problem_input, level, test=False):
-    rations = problem_input.split("\n\n")
     calories = []
-    for ration in rations:
-        calories.append(sum([int (r) for r in ration.splitlines()]))
-    if level == 1:
-        return max(calories)
-    elif level == 2:
-        return sum(sorted(calories, reverse=True)[0:3])
+    for ration in problem_input.split("\n\n"):
+        calories.append(sum([int (meal) for meal in ration.splitlines()]))
+
+    return max(calories) if level == 1 else sum(sorted(calories, reverse=True)[0:3])
 
 
 aoc_utils.run(answer, cases)
