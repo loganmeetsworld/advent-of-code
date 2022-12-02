@@ -1,43 +1,65 @@
 from aoc_utils import aoc_utils
 from tests import cases
 
-def answer(problem_input, level, test=False):
-    win = 6
-    lose = 0
-    draw = 3
+SCORE_GUIDE = {
+    'AB': 0,
+    'BA': 6,
+    'AC': 6,
+    'CA': 0,
+    'BC': 0,
+    'CB': 6,
+    'AA': 3,
+    'BB': 3,
+    'CC': 3
+}
 
-    play_value = {
-        'A': 1,
-        'B': 2,
-        'C': 3,
-    }
+TRANSLATE = {
+    'X': 'A',
+    'Y': 'B',
+    'Z': 'C'
+}
 
-    losing_plays = {
-        'A': 'C',
-        'B': 'A',
-        'C': 'B'
-    }
+LOSING_PLAYS = {
+    'A': 'C',
+    'B': 'A',
+    'C': 'B'
+}
 
-    winning_plays = {
-        'A': 'B',
-        'B': 'C',
-        'C': 'A'
-    }
+WINNING_PLAYS = {
+    'A': 'B',
+    'B': 'C',
+    'C': 'A'
+}
 
-    games = [line.split(' ') for line in problem_input.splitlines()]
+
+def play_linear(games):
     total_score = 0
     for game in games:
-        if game[1] == 'Y':
-            choice = game[0]
-            total_score += play_value[choice] + draw
-        if game[1] == 'X':
-            choice = losing_plays[game[0]]
-            total_score += play_value[choice] + lose
-        if game[1] == 'Z':
-            choice = winning_plays[game[0]]
-            total_score += play_value[choice] + win
+        total_score += SCORE_GUIDE[game[0] + TRANSLATE[game[1]]] + ord(TRANSLATE[game[1]]) - 64
 
     return total_score
+
+
+def play_strategy(games):
+    total_score = 0
+    for game in games:
+        if game[1] == 'X':
+            choice = LOSING_PLAYS[game[0]]
+            total_score += + 3
+        elif game[1] == 'Y':
+            choice = game[0]
+        elif game[1] == 'Z':
+            choice = WINNING_PLAYS[game[0]]
+            total_score += 6
+
+        total_score += (ord(choice) - 64) 
+
+    return total_score
+
+
+def answer(problem_input, level, test=False):
+    games = [line.split(' ') for line in problem_input.splitlines()]
+    return play_linear(games) if level == 1 else play_strategy(games)
 
 
 aoc_utils.run(answer, cases)
