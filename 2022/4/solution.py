@@ -9,13 +9,17 @@ def process_pair(pair):
 
 
 def answer(problem_input, level, test=False):
-    superset_count = 0
+    count = 0
     for pair in problem_input.splitlines():
         A, B = process_pair(pair)
-        if A.issuperset(B) or B.issuperset(A):
-            superset_count += 1
+        if level == 1:
+            if A.issuperset(B) or B.issuperset(A):
+                count += 1
+        elif level == 2:
+            if A.intersection(B):
+                count += 1
 
-    return superset_count
+    return count
 
 
 aoc_utils.run(answer, cases)
