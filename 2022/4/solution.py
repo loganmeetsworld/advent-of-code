@@ -2,9 +2,9 @@ from aoc_utils import aoc_utils
 from tests import cases
 
 def process_pair(pair):
-    pair = [elem.split('-') for elem in pair.split(',')]
-    A = set(range(int(pair[0][0]), int(pair[0][1]) + 1))
-    B = set(range(int(pair[1][0]), int(pair[1][1]) + 1))
+    A, B = [elem.split('-') for elem in pair.split(',')]
+    A = set(range(int(A[0]), int(A[1]) + 1))
+    B = set(range(int(B[0]), int(B[1]) + 1))
     return A, B
 
 
