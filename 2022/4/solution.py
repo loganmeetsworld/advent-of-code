@@ -13,12 +13,9 @@ def answer(problem_input, level, test=False):
     for pair in problem_input.splitlines():
         A, B = process_pair(pair)
         if level == 1:
-            if A.issuperset(B) or B.issuperset(A):
-                count += 1
+            if A.issuperset(B) or B.issuperset(A): count += 1
         elif level == 2:
-            if A.intersection(B):
-                count += 1
-
+            if A.intersection(B): count += 1
     return count
 
 
