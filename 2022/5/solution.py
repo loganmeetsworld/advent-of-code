@@ -1,5 +1,3 @@
-from collections import deque
-import numpy as np
 import re
 
 from aoc_utils import aoc_utils
@@ -10,14 +8,12 @@ def create_stacks(crane_map):
     places = [1]
     while len(crane_map[0]) > places[-1] + 4:
         places.append(places[-1] + 4)
-
     cranes = []
     for crane in crane_map:
         crane_row = []
         for place in places:
             crane_row.append(crane[place])
         cranes.append(crane_row)
-
     rows, columns = len(cranes), len(cranes[0])
     stacks = []
     for j in range(columns):
@@ -32,13 +28,11 @@ def create_stacks(crane_map):
 def answer(problem_input, level, test=False):
     crane_map, directions = problem_input.split('\n\n')
     stacks =  create_stacks(crane_map.splitlines()[:-1])
-
     for direction in directions.splitlines():
         num_to_move, from_idx, to_idx = re.findall("(\d+)", direction)
         for _ in range(int(num_to_move)):
             pop = stacks[int(from_idx) - 1].pop(0)
-            stacks[int(to_idx) -1].insert(0, pop)
-                    
+            stacks[int(to_idx) - 1].insert(0, pop)
     return "".join([crane[0] for crane in stacks])
 
 
