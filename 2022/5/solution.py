@@ -27,12 +27,20 @@ def create_stacks(crane_map):
 
 def answer(problem_input, level, test=False):
     crane_map, directions = problem_input.split('\n\n')
+    directions = directions.splitlines()
     stacks =  create_stacks(crane_map.splitlines()[:-1])
-    for direction in directions.splitlines():
+    for direction in directions:
         num_to_move, from_idx, to_idx = re.findall("(\d+)", direction)
-        for _ in range(int(num_to_move)):
-            pop = stacks[int(from_idx) - 1].pop(0)
-            stacks[int(to_idx) - 1].insert(0, pop)
+        if level == 1:
+            for _ in range(int(num_to_move)):
+                pop = stacks[int(from_idx) - 1].pop(0)
+                stacks[int(to_idx) - 1].insert(0, pop)
+        elif level == 2:
+            popped = stacks[int(from_idx ) - 1][0:int(num_to_move)]
+            for _ in range(int(num_to_move)):
+                stacks[int(from_idx) - 1].pop(0)
+            stacks[int(to_idx) - 1] = popped + stacks[int(to_idx) - 1]
+
     return "".join([crane[0] for crane in stacks])
 
 
