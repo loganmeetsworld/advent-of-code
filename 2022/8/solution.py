@@ -13,7 +13,6 @@ def answer(problem_input, level, test=False):
             heighest_up_seen = 9
             ups = []
             while rowi - ups_counter >= 0:
-                # print(int(tree_map[rowi - ups_counter][coli]))
                 if int(tree_map[rowi - ups_counter][coli]) <= heighest_up_seen:
                     ups_visible += 1
                     heighest_up_seen = int(tree_map[rowi - ups_counter][coli])
@@ -56,14 +55,18 @@ def answer(problem_input, level, test=False):
                 lefts.append(tree_map[rowi][coli - lefts_counter])
                 lefts_counter += 1
 
+            scenic_score = downs_visible * ups_visible * rights_visible * lefts_visible
+            if scenic_score == 91800:
+                print(rowi)
+                print(coli)
+            scenic_scores.append(scenic_score)
+
             if coli == 0 or rowi == 0 or coli + 1 == len(row) or len(tree_map) == rowi + 1:
                 visible_count += 1
                 continue
 
             if col > max(ups) or col > max(downs) or col > max(lefts) or col > max(rights):
                 visible_count += 1
-
-            scenic_scores.append(downs_visible * ups_visible * rights_visible * lefts_visible)
 
     if level == 1:
         return visible_count
