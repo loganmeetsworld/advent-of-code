@@ -3,6 +3,8 @@ from tests import cases
 
 
 def answer(problem_input, level, test=False):
+    commands = problem_input.splitlines()
+    
     return 0
 
 
