@@ -6,66 +6,76 @@ def answer(problem_input, level, test=False):
     tree_map = [list(col) for col in problem_input.splitlines()]
     visible_count = 0
     scenic_scores = []
-    for rowi, row in enumerate(tree_map):
-        for coli, col in enumerate(row):
+    for row_idx, row in enumerate(tree_map):
+        for tree_idx, tree in enumerate(row):
+            # If our tree is on the edge, it is visible, move on
+            if tree_idx == 0 or row_idx == 0 or tree_idx + 1 == len(row) or len(tree_map) == row_idx + 1:
+                visible_count += 1
+                continue
+
             ups_counter = 1
             ups_visible = 0
-            heighest_up_seen = 9
             ups = []
-            while rowi - ups_counter >= 0:
-                if int(tree_map[rowi - ups_counter][coli]) <= heighest_up_seen:
+            view_blocked_up = False
+            while row_idx - ups_counter >= 0:
+                up = int(tree_map[row_idx - ups_counter][tree_idx])
+                if not view_blocked_up:
                     ups_visible += 1
-                    heighest_up_seen = int(tree_map[rowi - ups_counter][coli])
-                ups.append(tree_map[rowi - ups_counter][coli])
+
+                if up >= int(tree):
+                    view_blocked_up = True
+                ups.append(up)
                 ups_counter += 1
 
             downs_counter = 1
             downs_visible = 0
-            heighest_down_seen = 9
             downs = []
-            while rowi + downs_counter < len(tree_map):
-                if int(tree_map[rowi + downs_counter][coli]) <= heighest_down_seen:
+            view_blocked_down = False
+            while row_idx + downs_counter < len(tree_map):
+                down = int(tree_map[row_idx + downs_counter][tree_idx])
+                if not view_blocked_down:
                     downs_visible += 1
-                    heighest_down_seen = int(tree_map[rowi + downs_counter][coli])
 
-                downs.append(tree_map[rowi + downs_counter][coli])
+                if down >= int(tree):
+                    view_blocked_down = True
+
+                downs.append(down)
                 downs_counter += 1
 
             rights_counter = 1
             rights_visible = 0
-            heighest_right_seen = 9
             rights = []
-            while coli + rights_counter < len(row):
-                if int(tree_map[rowi][coli + rights_counter]) <= heighest_right_seen:
+            view_blocked_right = False
+            while tree_idx + rights_counter < len(row):
+                right = int(tree_map[row_idx][tree_idx + rights_counter])
+                if not view_blocked_right:
                     rights_visible += 1
-                    heighest_right_seen = int(tree_map[rowi][coli + rights_counter])
 
-                rights.append(tree_map[rowi][coli + rights_counter])
+                if right >= int(tree):
+                    view_blocked_right = True
+
+                rights.append(right)
                 rights_counter += 1
 
             lefts_counter = 1
             lefts_visible = 0
-            heighest_left_seen = 9
             lefts = []
-            while coli - lefts_counter >= 0:
-                if int(tree_map[rowi][coli - lefts_counter]) <= heighest_left_seen:
+            view_blocked_left = False
+            while tree_idx - lefts_counter >= 0:
+                left = int(tree_map[row_idx][tree_idx - lefts_counter])
+                if not view_blocked_left:
                     lefts_visible += 1
-                    heighest_left_seen = int(tree_map[rowi][coli - lefts_counter])
 
-                lefts.append(tree_map[rowi][coli - lefts_counter])
+                if left >= int(tree):
+                    view_blocked_left = True
+
+                lefts.append(left)
                 lefts_counter += 1
 
             scenic_score = downs_visible * ups_visible * rights_visible * lefts_visible
-            if scenic_score == 91800:
-                print(rowi)
-                print(coli)
             scenic_scores.append(scenic_score)
 
-            if coli == 0 or rowi == 0 or coli + 1 == len(row) or len(tree_map) == rowi + 1:
-                visible_count += 1
-                continue
-
-            if col > max(ups) or col > max(downs) or col > max(lefts) or col > max(rights):
+            if int(tree) > max(ups) or int(tree) > max(downs) or int(tree) > max(lefts) or int(tree) > max(rights):
                 visible_count += 1
 
     if level == 1:
