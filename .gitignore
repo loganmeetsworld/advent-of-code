@@ -1,3 +1,4 @@
+*.txt
 session.sh
 __pycache__/
 .vscode/
