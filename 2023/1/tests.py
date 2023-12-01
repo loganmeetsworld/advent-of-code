@@ -9,5 +9,6 @@ abcone2threexyz
 xtwone3four
 4nineeightseven2
 zoneight234
-7pqrstsixteen""", 'output': 281}
+7pqrstsixteen
+eighthree""", 'output': 364}
 ]
