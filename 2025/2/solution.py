@@ -25,7 +25,7 @@ def check_for_invalid_ids(id_range, level):
             if id_has_double_pattern(str(id)):
                 invalid_ids.append(id)
         if level == 2:
-            if id_is_all_repeats(str(id)):
+            if len(str(id)) > 1 and id_is_all_repeats(str(id)):
                 invalid_ids.append(id)
 
     return invalid_ids
