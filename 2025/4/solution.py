@@ -3,11 +3,13 @@ from tests import cases
 
 
 class RollDiagram():
-    def __init__(self, map, level):
+    def __init__(self, map):
         self.spots = [list(s) for s in map.splitlines()]
         self.height = len(self.spots) - 1
         self.width = len(self.spots[0]) - 1
         self.access_spots = 0
+        self.removed_rolls = 0
+        self.rolls_to_remove = True
 
     def print_spots(self):
         [print(''.join(s)) for s in self.spots]
@@ -60,12 +62,28 @@ class RollDiagram():
                 if self.spots[ypos][xpos] == '@' and self.get_adjacent(ypos, xpos).count("@") < 4:
                     self.access_spots += 1
 
+    def remove_rolls(self):
+        self.rolls_to_remove = False
+        for ypos, y in enumerate(self.spots):
+            for xpos, x in enumerate(y):
+                if self.spots[ypos][xpos] == '@' and self.get_adjacent(ypos, xpos).count("@") < 4:
+                    self.rolls_to_remove = True
+                    self.spots[ypos][xpos] = '.'
+                    self.removed_rolls += 1
+
 
 def answer(problem_input, level, test=False):
-    diagram = RollDiagram(problem_input, level)
-    diagram.count_access_spots()
-    # diagram.print_spots()
-    return diagram.access_spots
+    diagram = RollDiagram(problem_input)
+    if level == 1:
+        diagram.count_access_spots()
+        return diagram.access_spots
+    if level == 2:
+        while True:
+            if diagram.rolls_to_remove == False:
+                break
+            diagram.remove_rolls()
+
+        return diagram.removed_rolls
 
 
 aoc_utils.run(answer, cases)
