@@ -1,3 +1,6 @@
 cases = [
-    {'level': 1, 'input': None, 'output': None},
+    {'level': 1, 'input': """123 328  51 64
+ 45 64  387 23
+  6 98  215 314
+*   +   *   +""", 'output': 4277556},
 ]
