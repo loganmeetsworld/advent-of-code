@@ -16,22 +16,19 @@ def answer(problem_input, level, test=False):
     junct_box_coords = [[int(n) for n in l.split(",")] for l in problem_input.splitlines()]
     distances = sort_distances(junct_box_coords)
     if test and level == 1:
-        num_shortest_connections = 10
+        top_distances = distances[0:10]
     elif level == 1:
-        num_shortest_connections = 1000
+        top_distances = distances[0:1000]
     else:
-        num_shortest_connections = len(distances)
+        top_distances = distances
     
-    top_distances = distances[0:num_shortest_connections]
     circuits = []
     for distance in top_distances:
         coords = distance[1]
-        found_in_circuit = False
         found_in_circuits = []
         for circuit in circuits:
             if str(coords[0]) in circuit or str(coords[1]) in circuit:
                 found_in_circuits.append(circuit)
-                found_in_circuit = True
                 circuit.add(str(coords[0]))
                 circuit.add(str(coords[1]))
 
@@ -39,14 +36,16 @@ def answer(problem_input, level, test=False):
             mega_circuit = found_in_circuits[0].union(*found_in_circuits[1:])
             for circuit in found_in_circuits:
                 circuits.remove(circuit)
-            circuits.append(mega_circuit)
+            circuits.append(mega_circuit) 
         
-        if not found_in_circuit:
+        if not found_in_circuits:
             new_circuit = set()
             new_circuit.add(str(coords[0]))
             new_circuit.add(str(coords[1]))
             circuits.append(new_circuit)
 
+        if level == 2 and len(circuits) == 1 and len(circuits[0]) == len(junct_box_coords):
+            return coords[0][0] * coords[1][0]
 
     top_three_longest = sorted(circuits, key=len, reverse=True)[:3]
     return math.prod([len(c) for c in top_three_longest])
