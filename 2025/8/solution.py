@@ -15,10 +15,12 @@ def sort_distances(coords):
 def answer(problem_input, level, test=False):
     junct_box_coords = [[int(n) for n in l.split(",")] for l in problem_input.splitlines()]
     distances = sort_distances(junct_box_coords)
-    if test:
+    if test and level == 1:
         num_shortest_connections = 10
-    else:
+    elif level == 1:
         num_shortest_connections = 1000
+    else:
+        num_shortest_connections = len(distances)
     
     top_distances = distances[0:num_shortest_connections]
     circuits = []
@@ -44,6 +46,7 @@ def answer(problem_input, level, test=False):
             new_circuit.add(str(coords[0]))
             new_circuit.add(str(coords[1]))
             circuits.append(new_circuit)
+
 
     top_three_longest = sorted(circuits, key=len, reverse=True)[:3]
     return math.prod([len(c) for c in top_three_longest])
